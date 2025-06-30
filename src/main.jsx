@@ -123,8 +123,7 @@ const App = () => {
 
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
-
-    const { error } = await supabase.from("matches").upsert({
+    const { error } = await supabase.from("matches_heren").upsert({
       name: matchName,
       moments,
       video_id: videoId
@@ -140,8 +139,7 @@ const App = () => {
   };
 
   const handleLoadMatch = async (name) => {
-    const { data, error } = await supabase.from("matches").select().eq("name", name).single();
-
+    const { data, error } = await supabase.from("matches_heren").select().eq("name", name).single();
     if (error) {
       console.error("Fout bij ophalen:", error.message);
       return;
@@ -154,7 +152,7 @@ const App = () => {
   };
 
   const deleteMatch = async (name) => {
-    const { error } = await supabase.from("matches").delete().eq("name", name);
+    const { error } = await supabase.from("matches_heren").delete().eq("name", name);
     if (error) {
       console.error("Fout bij verwijderen:", error.message);
     } else {
@@ -163,7 +161,7 @@ const App = () => {
   };
 
   const loadMatches = () => {
-    supabase.from("matches").select("name").then(({ data }) => {
+    supabase.from("matches_heren").select("name").then(({ data }) => {
       setSavedMatches(data.map((m) => m.name));
     });
   };
