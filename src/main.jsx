@@ -123,7 +123,6 @@ const App = () => {
 
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
-
     const { error } = await supabase.from("matches_heren").upsert({
       name: matchName,
       moments,
@@ -141,7 +140,6 @@ const App = () => {
 
   const handleLoadMatch = async (name) => {
     const { data, error } = await supabase.from("matches_heren").select().eq("name", name).single();
-
     if (error) {
       console.error("Fout bij ophalen:", error.message);
       return;
