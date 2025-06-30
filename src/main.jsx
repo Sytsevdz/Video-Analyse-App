@@ -232,7 +232,7 @@ const App = () => {
 
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
-      <h1>Video Analyse NL</h1>
+      <h1>Video Analyse NL Heren</h1>
       <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
       <button onClick={handleVideoLoad} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
 
