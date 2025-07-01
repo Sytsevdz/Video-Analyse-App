@@ -6,9 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3   # gebruik npm-variant als je geen pnpm gebruikt
-        with:
-          run_install: true          # installeert je pakketten
-      - run: pnpm run lint || true   # vervang of verwijder als je (nog) geen lint-script hebt
-      - run: pnpm run test || true   # idem voor tests
+- uses: actions/setup-node@v4        # installeert Node & npm
+  with:
+    node-version: 20                 # kies jouw Node-versie
+- run: npm install                   # installeert je pakketten
+- run: npm run lint || true          # voer lint uit (mag weg als je geen lint-script hebt)
+- run: npm run test || true          # voer tests uit (mag weg als je geen test-script hebt)
+
