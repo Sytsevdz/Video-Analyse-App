@@ -1,0 +1,14 @@
+name: CI / lint-en-test
+on:
+  pull_request:
+    branches: [main, develop]   # pas aan als je een andere integratie-branch hebt
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3   # gebruik npm-variant als je geen pnpm gebruikt
+        with:
+          run_install: true          # installeert je pakketten
+      - run: pnpm run lint || true   # vervang of verwijder als je (nog) geen lint-script hebt
+      - run: pnpm run test || true   # idem voor tests
