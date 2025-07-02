@@ -95,6 +95,45 @@ const InstructionsModal = ({ onClose, label }) => (
   </div>
 );
 
+const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      zIndex: 1000,
+      overflowY: "auto",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        maxWidth: 500,
+        margin: "40px auto",
+      }}
+    >
+      <h2>Verzoek tot verwijderen</h2>
+      <p>Waarom wil je "{match}" verwijderen?</p>
+      <textarea
+        rows="4"
+        style={{ width: "100%" }}
+        value={reason}
+        onChange={(e) => onReasonChange(e.target.value)}
+      />
+      <div style={{ marginTop: 10 }}>
+        <button onClick={onSubmit} style={{ marginRight: 10 }}>Verzoek verwijdering</button>
+        <button onClick={onClose}>Annuleren</button>
+      </div>
+    </div>
+  </div>
+);
+
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
@@ -103,6 +142,8 @@ const App = () => {
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [table, setTable] = React.useState("matches_heren");
+  const [deleteMatchName, setDeleteMatchName] = React.useState(null);
+  const [deleteReason, setDeleteReason] = React.useState("");
 
   const labels = [
     "Doelpunt NL",
@@ -261,17 +302,30 @@ const App = () => {
   };
 
   const deleteMatch = async (name) => {
-    const { error } = await supabase.from(table).delete().eq("name", name);
-    if (error) {
-      console.error("Fout bij verwijderen:", error.message);
-    } else {
-      loadMatches();
+    setDeleteMatchName(name);
+    setDeleteReason("");
+  };
+
+  const submitDeleteRequest = async () => {
+    if (!deleteMatchName) return;
+    try {
+      await supabase.from('delete_requests').insert({
+        match: deleteMatchName,
+        reason: deleteReason,
+        table
+      });
+      alert('Verwijderingsverzoek verstuurd');
+    } catch (e) {
+      console.error('Fout bij verzoek:', e.message);
+    } finally {
+      setDeleteMatchName(null);
     }
   };
 
   const loadMatches = () => {
     supabase.from(table).select("name").then(({ data }) => {
-      setSavedMatches(data.map((m) => m.name));
+      const names = data.map((m) => m.name).sort((a, b) => a.localeCompare(b));
+      setSavedMatches(names);
     });
   };
 
@@ -440,6 +494,15 @@ const App = () => {
           </div>
         </div>
       </div>
+      {deleteMatchName && (
+        <DeleteRequestModal
+          match={deleteMatchName}
+          reason={deleteReason}
+          onReasonChange={setDeleteReason}
+          onSubmit={submitDeleteRequest}
+          onClose={() => setDeleteMatchName(null)}
+        />
+      )}
     </div>
   );
 };
