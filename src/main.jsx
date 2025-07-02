@@ -7,6 +7,7 @@ const INSTRUCTIONS_VERSION = "2";
 const RELEASE_NOTES = [
   "Laden van opgeslagen wedstrijd laadt nu ook de juiste video",
   "Verberg en toon knoppen toegevoegd",
+  "Fixed frame met scroll optie voor gemarkeerde momenten toegevoegd",
   "Selecteren van dames/heren categorie",
   "Banner toegevoegd",
   "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek)."
