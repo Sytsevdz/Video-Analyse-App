@@ -347,7 +347,7 @@ const App = () => {
       <div
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1608221942703-257f4d7aa0b3?auto=format&fit=crop&w=800&q=60')",
+            "url('/canoe_polo_banner_8x1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "200px",
