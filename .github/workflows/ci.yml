@@ -1,19 +1,26 @@
 name: CI / lint-en-test
+
+# ── Wanneer moet de workflow draaien? ───────────────────────────────────────────
 on:
-  pull_request:
-    branches: [main, develop]   # pas aan als je een andere integratie-branch hebt
+  push:                    # elke push naar main of develop
+    branches: [main, develop]
+  pull_request:            # én elk PR richting main of develop
+    branches: [main, develop]
+
+# ── Eén job: build ─────────────────────────────────────────────────────────────
 jobs:
   build:
     runs-on: ubuntu-latest
-steps:
-      - uses: actions/checkout@v4          # haalt je code op
 
-      - uses: actions/setup-node@v4        # installeert Node & npm
+    steps:
+      - uses: actions/checkout@v4            # haalt de repo-code op
+
+      - uses: actions/setup-node@v4          # installeert Node + npm
         with:
-          node-version: 20                 # kies jouw Node-versie
+          node-version: 20                   # kies je Node-versie
 
-      - run: npm install                   # installeert je pakketten
+      - run: npm install                     # installeert dependencies
 
-      - run: npm run lint || true          # lint; || true laat de job slagen als je geen lint-script hebt
+      - run: npm run lint || true            # lint (|| true → geen lint? job slaagt toch)
 
-      - run: npm run test || true          # tests; idem
+      - run: npm run test || true            # tests (idem)
