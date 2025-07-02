@@ -6,10 +6,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-- uses: actions/setup-node@v4        # installeert Node & npm
+    - uses: actions/setup-node@v4        # installeert Node & npm
   with:
     node-version: 20                 # kies jouw Node-versie
-- run: npm install                   # installeert je pakketten
-- run: npm run lint || true          # voer lint uit (mag weg als je geen lint-script hebt)
-- run: npm run test || true          # voer tests uit (mag weg als je geen test-script hebt)
+    - run: npm install                   # installeert je pakketten
+    - run: npm run lint || true          # voer lint uit (mag weg als je geen lint-script hebt)
+    - run: npm run test || true          # voer tests uit (mag weg als je geen test-script hebt)
+
 
