@@ -344,7 +344,32 @@ const App = () => {
       {showInstructions && (
         <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
       )}
-      <h1>Video Analyse NL {tableOptions[table]}</h1>
+      <div
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1608221942703-257f4d7aa0b3?auto=format&fit=crop&w=800&q=60')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "200px",
+          borderRadius: "8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          marginBottom: 20,
+        }}
+      >
+        <h1
+          style={{
+            background: "rgba(0,0,0,0.5)",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            margin: 0,
+          }}
+        >
+          Video Analyse NL
+        </h1>
+      </div>
       <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
       <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
 
