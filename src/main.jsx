@@ -533,9 +533,6 @@ const App = () => {
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
-            Selecteer hieronder de categorie
-          </div>
           <div style={{ display: "flex", gap: "5px", marginBottom: "5px" }}>
             <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
               ❔ Instructies
@@ -543,6 +540,9 @@ const App = () => {
             <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
               📝 Releases
             </button>
+          </div>
+          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
+            Selecteer hieronder de categorie
           </div>
           <select value={table} onChange={(e) => setTable(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
             {Object.entries(tableOptions).map(([val, label]) => (
