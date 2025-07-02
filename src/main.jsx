@@ -4,7 +4,7 @@ import { supabase } from "./supabaseClient";
 
 const INSTRUCTIONS_VERSION = "1";
 
-const InstructionsModal = ({ onClose }) => (
+const InstructionsModal = ({ onClose, label }) => (
   <div
     style={{
       position: "fixed",
@@ -28,7 +28,7 @@ const InstructionsModal = ({ onClose }) => (
         lineHeight: 1.6,
       }}
     >
-      <h2>📺 Handleiding – Video Analyse NL Heren</h2>
+      <h2>📺 Handleiding – Video Analyse NL {label}</h2>
       <p>
         Met deze web-app kun je live of achteraf analytische “momenten” in een
         YouTube-video markeren en de analyse als <strong>wedstrijd</strong> opslaan. Hieronder vind je een korte stap-voor-stap uitleg.
@@ -102,6 +102,7 @@ const App = () => {
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
+  const [table, setTable] = React.useState("matches_heren");
 
   const labels = [
     "Doelpunt NL",
@@ -115,6 +116,11 @@ const App = () => {
     "Verdedigingsmoment NL",
     "Verdedigingsmoment tegen"
   ];
+
+  const tableOptions = {
+    matches_heren: "Heren",
+    matches: "Dames"
+  };
 
   React.useEffect(() => {
     const handleKeyDown = (e) => {
@@ -226,7 +232,7 @@ const App = () => {
 
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
-    const { error } = await supabase.from("matches_heren").upsert({
+    const { error } = await supabase.from(table).upsert({
       name: matchName,
       moments,
       video_id: videoId
@@ -242,7 +248,7 @@ const App = () => {
   };
 
   const handleLoadMatch = async (name) => {
-    const { data, error } = await supabase.from("matches_heren").select().eq("name", name).single();
+    const { data, error } = await supabase.from(table).select().eq("name", name).single();
     if (error) {
       console.error("Fout bij ophalen:", error.message);
       return;
@@ -255,7 +261,7 @@ const App = () => {
   };
 
   const deleteMatch = async (name) => {
-    const { error } = await supabase.from("matches_heren").delete().eq("name", name);
+    const { error } = await supabase.from(table).delete().eq("name", name);
     if (error) {
       console.error("Fout bij verwijderen:", error.message);
     } else {
@@ -264,7 +270,7 @@ const App = () => {
   };
 
   const loadMatches = () => {
-    supabase.from("matches_heren").select("name").then(({ data }) => {
+    supabase.from(table).select("name").then(({ data }) => {
       setSavedMatches(data.map((m) => m.name));
     });
   };
@@ -336,9 +342,9 @@ const App = () => {
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       {showInstructions && (
-        <InstructionsModal onClose={closeInstructions} />
+        <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
       )}
-      <h1>Video Analyse NL Heren</h1>
+      <h1>Video Analyse NL {tableOptions[table]}</h1>
       <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
       <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
 
@@ -383,6 +389,11 @@ const App = () => {
         </div>
 
         <div style={{ flex: 1 }}>
+          <select value={table} onChange={(e) => setTable(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
+            {Object.entries(tableOptions).map(([val, label]) => (
+              <option key={val} value={val}>{label}</option>
+            ))}
+          </select>
           <input type="text" placeholder="Wedstrijdnaam..." value={matchName} onChange={(e) => setMatchName(e.target.value)} style={{ width: "100%" }} />
           <button onClick={saveMatch} disabled={!matchName} style={buttonStyle()}>💾 Opslaan</button>
           <button onClick={loadMatches} style={buttonStyle()}>📂 Bekijk opgeslagen</button>
