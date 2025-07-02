@@ -2,12 +2,109 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
 
+const INSTRUCTIONS_VERSION = "1";
+
+const InstructionsModal = ({ onClose }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      zIndex: 1000,
+      overflowY: "auto",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        maxWidth: 600,
+        margin: "40px auto",
+        lineHeight: 1.6,
+      }}
+    >
+      <h2>📺 Handleiding – Video Analyse NL Heren</h2>
+      <p>
+        Met deze web-app kun je live of achteraf analytische “momenten” in een
+        YouTube-video markeren en de analyse als <strong>wedstrijd</strong>
+        opslaan. Hieronder vind je een korte stap-voor-stap uitleg.
+      </p>
+      <hr />
+      <h3>1. Video laden</h3>
+      <ol>
+        <li>
+          Plak de <strong>YouTube-link</strong> in het veld “YouTube link
+          plakken…” bovenaan.
+        </li>
+        <li>
+          Klik op <strong>📷 Load video</strong>. De speler verschijnt en de video
+          staat klaar om af te spelen (spatiebalk = play/pause).
+        </li>
+      </ol>
+      <hr />
+      <h3>2. Momenten markeren</h3>
+      <p>
+        Momenten markeren kan met de zwevende knoppen of de sneltoetsen zoals
+        rechts aangegeven.
+      </p>
+      <p>
+        Elke keer dat je een knop indrukt, verschijnt het bijbehorende label in
+        de sectie <strong>Gemarkeerde momenten</strong> onderaan. Het moment
+        wordt altijd 5 seconden terug in de tijd opgeslagen.
+      </p>
+      <hr />
+      <h3>3. Wedstrijd opslaan</h3>
+      <ol>
+        <li>
+          Vul rechtsboven in het veld “Wedstrijdnaam…” een herkenbare titel in.
+        </li>
+        <li>
+          Klik <strong>Opslaan</strong> om de huidige video + gemarkeerde
+          momenten vast te leggen.
+        </li>
+        <li>
+          Gebruik <strong>Bekijk opgeslagen</strong> om eerder opgeslagen
+          wedstrijden te openen.
+        </li>
+      </ol>
+      <h3>4. Tips</h3>
+      <ul>
+        <li>
+          Je kunt tijdens het afspelen labels toevoegen zonder te pauzeren;
+          gebruik <code>E</code> als je eerst wilt pauzeren.
+        </li>
+        <li>
+          Labels zijn kleur-gecodeerd: <strong>groen</strong> = voor NL,
+          <strong>rood</strong> = voor de tegenstander.
+        </li>
+        <li>
+          Fout gemaakt? Verwijder een entry in de lijst
+          <em>Gemarkeerde momenten</em> voordat je opslaat.
+        </li>
+      </ul>
+      <p>Veel analyse-plezier!</p>
+      <button
+        onClick={onClose}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+      >
+        Aan de slag
+      </button>
+    </div>
+  </div>
+);
+
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
+  const [showInstructions, setShowInstructions] = React.useState(false);
 
   const labels = [
     "Doelpunt NL",
@@ -56,6 +153,18 @@ const App = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [player]);
+
+  React.useEffect(() => {
+    const seen = localStorage.getItem("instructionsVersion");
+    if (seen !== INSTRUCTIONS_VERSION) {
+      setShowInstructions(true);
+    }
+  }, []);
+
+  const closeInstructions = () => {
+    localStorage.setItem("instructionsVersion", INSTRUCTIONS_VERSION);
+    setShowInstructions(false);
+  };
 
 
   const handlePlayerReady = (event) => setPlayer(event.target);
@@ -229,6 +338,9 @@ const App = () => {
 
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+      {showInstructions && (
+        <InstructionsModal onClose={closeInstructions} />
+      )}
       <h1>Video Analyse NL Heren</h1>
       <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
       <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
