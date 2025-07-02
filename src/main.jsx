@@ -60,7 +60,7 @@ const InstructionsModal = ({ onClose, label }) => (
       <h3>3. Wedstrijd opslaan</h3>
       <ol>
         <li>
-          Vul rechtsboven in het veld “Wedstrijdnaam…” een herkenbare titel in.
+          Selecteer rechtsboven <strong>Heren</strong> of <strong>Dames</strong> en vul in het veld “Wedstrijdnaam…” een herkenbare en unieke titel in.
         </li>
         <li>
           Klik <strong>Opslaan</strong> om de huidige video + gemarkeerde
@@ -68,7 +68,7 @@ const InstructionsModal = ({ onClose, label }) => (
         </li>
         <li>
           Gebruik <strong>Bekijk opgeslagen</strong> om eerder opgeslagen
-          wedstrijden te openen.
+          wedstrijden per categorie, heren of dames, te openen. 
         </li>
       </ol>
       <h3>4. Tips</h3>
