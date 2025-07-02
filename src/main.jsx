@@ -32,7 +32,7 @@ const InstructionsModal = ({ onClose }) => (
       <p>
         Met deze web-app kun je live of achteraf analytische “momenten” in een
         YouTube-video markeren en de analyse als <strong>wedstrijd</strong> 
-        opslaan. Hieronder vind je een korte stap-voor-stap uitleg.
+         opslaan. Hieronder vind je een korte stap-voor-stap uitleg.
       </p>
       <hr />
       <h3>1. Video laden</h3>
@@ -80,7 +80,7 @@ const InstructionsModal = ({ onClose }) => (
         </li>
         <li>
           Labels zijn kleur-gecodeerd: <strong>groen</strong> = voor NL, 
-          <strong>rood</strong> = voor de tegenstander.
+           <strong>rood</strong> = voor de tegenstander.
         </li>
         <li>
           Fout gemaakt? Verwijder een entry in de lijst
