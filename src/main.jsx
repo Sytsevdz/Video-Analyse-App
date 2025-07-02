@@ -394,21 +394,23 @@ const App = () => {
           </div>
 
           <h3>Gemarkeerde momenten:</h3>
-          <ul>
-            {moments.map((m, i) => (
-              <li key={i}>
-                <button onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
-                <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
-                  <option value="">-- Kies label --</option>
-                  {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
-                </select>
-                <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} style={{ marginLeft: 5 }} />
-                <button onClick={() => adjustTime(i, -1)}>-1s</button>
-                <button onClick={() => adjustTime(i, 1)}>+1s</button>
-                <button onClick={() => deleteMoment(i)} style={{ color: "red" }}>🗑️</button>
-              </li>
-            ))}
-          </ul>
+          <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {moments.map((m, i) => (
+                <li key={i} style={{ marginBottom: "4px" }}>
+                  <button onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
+                  <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
+                    <option value="">-- Kies label --</option>
+                    {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
+                  </select>
+                  <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} style={{ marginLeft: 5 }} />
+                  <button onClick={() => adjustTime(i, -1)}>-1s</button>
+                  <button onClick={() => adjustTime(i, 1)}>+1s</button>
+                  <button onClick={() => deleteMoment(i)} style={{ color: "red" }}>🗑️</button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <button onClick={download} style={buttonStyle()}>📥 Download JSON</button>
         </div>
