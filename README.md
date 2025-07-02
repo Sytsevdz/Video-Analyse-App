@@ -8,5 +8,5 @@ Features include:
 - Choose between the `matches_heren` and `matches` tables (via a dropdown) to store and load annotations.
 - Download annotations as JSON.
 
-The app has the Supabase URL and API key configured directly in `src/supabaseClient.js` for the ACC environment, so no extra environment variables are required.
+Create a `.env` file based on `.env.example` and fill in your Supabase credentials. The app reads the URL and API key from the `VITE_SUPABASE_URL` and `VITE_SUPABASE_KEY` variables at build time.
  
