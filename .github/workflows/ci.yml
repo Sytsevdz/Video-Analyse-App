@@ -2,8 +2,6 @@ name: CI / lint-en-test
 
 # ── Wanneer moet de workflow draaien? ───────────────────────────────────────────
 on:
-  push:                    # elke push naar main of develop
-    branches: [main, develop]
   pull_request:            # én elk PR richting main of develop
     branches: [main, develop]
 

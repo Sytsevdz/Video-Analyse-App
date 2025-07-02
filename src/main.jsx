@@ -8,7 +8,6 @@ const App = () => {
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
-  const [shouldLoadVideo, setShouldLoadVideo] = React.useState(false);
 
   const labels = [
     "Doelpunt NL",
@@ -58,26 +57,24 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [player]);
 
-  React.useEffect(() => {
-    if (shouldLoadVideo && videoId) {
-      handleVideoLoad();
-      setShouldLoadVideo(false);
-    }
-  }, [shouldLoadVideo, videoId]);
 
   const handlePlayerReady = (event) => setPlayer(event.target);
 
-  const handleVideoLoad = () => {
-    const id = getYouTubeVideoId(videoId);
+  const handleVideoLoad = (url = videoId) => {
+    const id = getYouTubeVideoId(url);
     if (!id) return;
-    document.getElementById("player-container").innerHTML = "";
-    new YT.Player("player-container", {
-      width: "100%",
-      height: "100%",
-      videoId: id,
-      playerVars: { modestbranding: 1, rel: 0 },
-      events: { onReady: handlePlayerReady },
-    });
+    if (player) {
+      player.loadVideoById(id);
+    } else {
+      document.getElementById("player-container").innerHTML = "";
+      new YT.Player("player-container", {
+        width: "100%",
+        height: "100%",
+        videoId: id,
+        playerVars: { modestbranding: 1, rel: 0 },
+        events: { onReady: handlePlayerReady },
+      });
+    }
   };
 
   const getYouTubeVideoId = (url) => {
@@ -148,7 +145,7 @@ const App = () => {
     setMoments(data.moments || []);
     setMatchName(data.name);
     setVideoId(data.video_id || "");
-    setShouldLoadVideo(true);
+    handleVideoLoad(data.video_id);
   };
 
   const deleteMatch = async (name) => {
@@ -234,7 +231,7 @@ const App = () => {
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       <h1>Video Analyse NL Heren</h1>
       <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
-      <button onClick={handleVideoLoad} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
+      <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
 
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
         <div style={{ flex: 3 }}>
