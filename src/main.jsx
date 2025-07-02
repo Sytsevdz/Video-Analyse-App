@@ -2,7 +2,55 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
 
-const INSTRUCTIONS_VERSION = "1";
+const INSTRUCTIONS_VERSION = "2";
+
+const RELEASE_NOTES = [
+  "Laden van opgeslagen wedstrijd laadt nu ook de juiste video",
+  "Verberg en toon knoppen toegevoegd",
+  "Selecteren van dames/heren categorie",
+  "Banner toegevoegd",
+  "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek)."
+];
+
+const ReleaseModal = ({ onClose }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      zIndex: 1000,
+      overflowY: "auto",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        maxWidth: 600,
+        margin: "40px auto",
+        lineHeight: 1.6,
+      }}
+    >
+      <h2>📝 Releases</h2>
+      <ul>
+        {RELEASE_NOTES.map((n, i) => (
+          <li key={i}>{n}</li>
+        ))}
+      </ul>
+      <button
+        onClick={onClose}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+      >
+        Sluiten
+      </button>
+    </div>
+  </div>
+);
 
 const InstructionsModal = ({ onClose, label }) => (
   <div
@@ -83,6 +131,9 @@ const InstructionsModal = ({ onClose, label }) => (
         <li>
           Fout gemaakt? Verwijder een entry in de lijst <em>Gemarkeerde momenten</em> voordat je opslaat.
         </li>
+        <li>
+          Check ook de releases voor updates.
+        </li>
       </ul>
       <p>Veel analyse-plezier!</p>
       <button
@@ -141,6 +192,7 @@ const App = () => {
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
+  const [showReleases, setShowReleases] = React.useState(false);
   const [table, setTable] = React.useState("matches_heren");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
@@ -406,6 +458,9 @@ const App = () => {
       {showInstructions && (
         <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
       )}
+      {showReleases && (
+        <ReleaseModal onClose={() => setShowReleases(false)} />
+      )}
       <div
         style={{
           backgroundImage:
@@ -478,6 +533,17 @@ const App = () => {
         </div>
 
         <div style={{ flex: 1 }}>
+          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
+            Selecteer hieronder de categorie
+          </div>
+          <div style={{ display: "flex", gap: "5px", marginBottom: "5px" }}>
+            <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
+              ❔ Instructies
+            </button>
+            <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
+              📝 Releases
+            </button>
+          </div>
           <select value={table} onChange={(e) => setTable(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
             {Object.entries(tableOptions).map(([val, label]) => (
               <option key={val} value={val}>{label}</option>
