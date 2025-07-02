@@ -31,7 +31,7 @@ const InstructionsModal = ({ onClose }) => (
       <h2>📺 Handleiding – Video Analyse NL Heren</h2>
       <p>
         Met deze web-app kun je live of achteraf analytische “momenten” in een
-        YouTube-video markeren en de analyse als <strong>wedstrijd</strong>
+        YouTube-video markeren en de analyse als <strong>wedstrijd</strong> 
         opslaan. Hieronder vind je een korte stap-voor-stap uitleg.
       </p>
       <hr />
@@ -79,7 +79,7 @@ const InstructionsModal = ({ onClose }) => (
           gebruik <code>E</code> als je eerst wilt pauzeren.
         </li>
         <li>
-          Labels zijn kleur-gecodeerd: <strong>groen</strong> = voor NL,
+          Labels zijn kleur-gecodeerd: <strong>groen</strong> = voor NL, 
           <strong>rood</strong> = voor de tegenstander.
         </li>
         <li>
