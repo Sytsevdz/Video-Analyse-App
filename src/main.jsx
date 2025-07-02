@@ -369,7 +369,7 @@ const App = () => {
         </>
       ) : (
         <button onClick={() => setShowExtraButtons(true)} style={buttonStyle()}>Toon knoppen</button>
-      )
+      )}
     </>
   );
 
