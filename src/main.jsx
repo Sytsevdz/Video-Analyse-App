@@ -1,6 +1,6 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { supabase } from "./supabaseClient";
+import React from "https://esm.sh/react";
+import ReactDOM from "https://esm.sh/react-dom/client";
+import { supabase } from "./supabaseClient.js";
 
 const INSTRUCTIONS_VERSION = "1";
 

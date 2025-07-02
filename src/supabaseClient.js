@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js';
 
 // Direct Supabase credentials for the ACC environment
 const supabaseUrl = 'https://nbsrkypcjkevncgzepqs.supabase.co';
