@@ -1,0 +1,7 @@
+# Codex-configuratie
+version: 1
+
+setup: ./codex-setup.sh     # stap 1: dependencies installeren
+
+tests:
+  - npm run build           # stap 2: jouw bestaande build-script draaien
