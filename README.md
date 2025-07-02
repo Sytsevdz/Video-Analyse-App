@@ -12,3 +12,5 @@ The app has the Supabase URL and API key configured directly in `src/supabaseCli
 
 Running `npm run build` will generate a simple `dist` folder containing the HTML and source files so the app can be served as static assets.
  
+
+Open dist/index.html in a browser to run the app.
