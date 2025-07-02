@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouTube Sport Analyzer Heren</title>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.js"></script>
+    <script type="text/babel" data-presets="env,react" src="./src/main.js"></script>
   </body>
 </html>
