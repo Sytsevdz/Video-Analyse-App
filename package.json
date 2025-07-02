@@ -2,6 +2,6 @@
   "name": "video-analyze-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo 'No build step required'"
+    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/ && cp -r src dist/"
   }
 }
