@@ -194,6 +194,7 @@ const App = () => {
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [showReleases, setShowReleases] = React.useState(false);
+  const [showShortcuts, setShowShortcuts] = React.useState(false);
   const [table, setTable] = React.useState("matches_heren");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
@@ -403,7 +404,7 @@ const App = () => {
   });
 
   const renderFloatingButtons = () => (
-    <>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
       <button onClick={() => markMoment("")} style={buttonStyle("#ddd", true)}>➕ Markeer moment</button>
       <button onClick={() => markMoment("", true)} style={buttonStyle("#ddd", true)}>⏸️ Markeer + pauze</button>
       {showExtraButtons ? (
@@ -423,7 +424,7 @@ const App = () => {
       ) : (
         <button onClick={() => setShowExtraButtons(true)} style={buttonStyle()}>Toon knoppen</button>
       )}
-    </>
+    </div>
   );
 
   const renderLegend = () => (
@@ -454,6 +455,40 @@ const App = () => {
     </div>
   );
 
+  const ShortcutsModal = ({ onClose }) => (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0,0,0,0.6)",
+        zIndex: 1000,
+        overflowY: "auto",
+        padding: 20,
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          padding: 20,
+          borderRadius: 8,
+          maxWidth: 400,
+          margin: "40px auto",
+        }}
+      >
+        {renderLegend()}
+        <button
+          onClick={onClose}
+          style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+        >
+          Sluiten
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       {showInstructions && (
@@ -462,53 +497,41 @@ const App = () => {
       {showReleases && (
         <ReleaseModal onClose={() => setShowReleases(false)} />
       )}
+      {showShortcuts && (
+        <ShortcutsModal onClose={() => setShowShortcuts(false)} />
+      )}
+
       <div
         style={{
-          backgroundImage:
-            "url('/canoe_polo_banner_8x1.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "200px",
-          borderRadius: "8px",
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          justifyContent: "center",
+          background: "#004085",
           color: "#fff",
+          padding: "10px 20px",
+          borderRadius: 8,
           marginBottom: 20,
         }}
       >
-        <h1
-          style={{
-            background: "rgba(0,0,0,0.5)",
-            padding: "10px 20px",
-            borderRadius: "8px",
-            margin: 0,
-          }}
-        >
-          Video Analyse NL
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <img src="/canoe_polo_banner_8x1.png" alt="Logo" style={{ height: 40 }} />
+          <h1 style={{ margin: 0, fontSize: "24px" }}>Video Analyse NL</h1>
+        </div>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <button onClick={saveMatch} disabled={!matchName} style={buttonStyle()}>💾 Opslaan</button>
+          <button onClick={loadMatches} style={buttonStyle()}>📂 Laden</button>
+          <button onClick={download} style={buttonStyle()}>🔗 Delen</button>
+          <button onClick={() => alert('Instellingen komen hier')} style={buttonStyle()}>⚙️ Instellingen</button>
+          <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>❔</button>
+          <button onClick={() => setShowReleases(true)} style={buttonStyle()}>📝</button>
+          <button onClick={() => setShowShortcuts(true)} style={buttonStyle()}>⌨️</button>
+        </div>
       </div>
-      <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
-      <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
 
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
-        <div style={{ flex: 3 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
+        <div>
           <div style={{ position: "relative", paddingTop: "56.25%" }}>
             <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
-            <div style={{
-              position: "absolute",
-              top: "10px",
-              left: "10px",
-              right: "10px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              zIndex: 2,
-              justifyContent: "center",
-              pointerEvents: "auto"
-            }}>
-              {renderFloatingButtons()}
-            </div>
           </div>
 
           <h3>Gemarkeerde momenten:</h3>
@@ -533,16 +556,11 @@ const App = () => {
           <button onClick={download} style={buttonStyle()}>📥 Download JSON</button>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", gap: "5px", marginBottom: "5px" }}>
-            <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
-              ❔ Instructies
-            </button>
-            <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
-              📝 Releases
-            </button>
-          </div>
-          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
+        <div>
+          <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
+          <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
+          <div style={{ marginTop: 10 }}>{renderFloatingButtons()}</div>
+          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", margin: "10px 0", textAlign: "center" }}>
             Selecteer hieronder de categorie
           </div>
           <select value={table} onChange={(e) => setTable(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
@@ -551,7 +569,6 @@ const App = () => {
             ))}
           </select>
           <input type="text" placeholder="Wedstrijdnaam..." value={matchName} onChange={(e) => setMatchName(e.target.value)} style={{ width: "100%" }} />
-          <button onClick={saveMatch} disabled={!matchName} style={buttonStyle()}>💾 Opslaan</button>
           <button onClick={loadMatches} style={buttonStyle()}>📂 Bekijk opgeslagen</button>
           {savedMatches.length > 0 && (
             <ul>
@@ -564,9 +581,6 @@ const App = () => {
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "20px" }}>
-            {renderLegend()}
-          </div>
         </div>
       </div>
       {deleteMatchName && (
