@@ -10,7 +10,8 @@ const RELEASE_NOTES = [
   "Fixed frame met scroll optie voor gemarkeerde momenten toegevoegd",
   "Selecteren van dames/heren categorie",
   "Banner toegevoegd",
-  "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek)."
+  "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek).",
+  "Dames categorie staat nu standaard geselecteerd"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -247,7 +248,7 @@ const App = () => {
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [showReleases, setShowReleases] = React.useState(false);
   const [showShortcuts, setShowShortcuts] = React.useState(false);
-  const [table, setTable] = React.useState("matches_heren");
+  const [table, setTable] = React.useState("matches");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
 
