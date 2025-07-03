@@ -614,6 +614,7 @@ const App = () => {
               ⌨️ Sneltoetsen
             </button>
           </div>
+          {renderFloatingButtons()}
           <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
             Selecteer hieronder de categorie
           </div>
@@ -636,7 +637,6 @@ const App = () => {
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "20px" }}>{renderFloatingButtons()}</div>
         </div>
       </div>
       {deleteMatchName && (
