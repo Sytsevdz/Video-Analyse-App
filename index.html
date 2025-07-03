@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouTube Sport Analyzer Heren</title>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              nl:  { DEFAULT: '#D1FAE5', dark: '#047857' },
+              opp: { DEFAULT: '#FEE2E2', dark: '#B91C1C' },
+              UIbg: '#0F172A',
+            }
+          }
+        }
+      }
+    </script>
+    <style>body{font-family:"Inter",sans-serif;}</style>
   </head>
   <body>
     <div id="root"></div>
