@@ -137,18 +137,19 @@ const InstructionsModal = ({ onClose, label }) => (
       <ol>
         <li>
           Plak de <strong>YouTube-link</strong> in het veld “YouTube link
-          plakken…” bovenaan.
+          plakken…” in de zijbalk rechts.
         </li>
         <li>
-          Klik op <strong>📷 Load video</strong>. De speler verschijnt en de video
-          staat klaar om af te spelen (spatiebalk = play/pause).
+          Klik op <strong>🎬 Laad video en start analyse</strong>. De speler
+          verschijnt en de video staat klaar om af te spelen (spatiebalk =
+          play/pause).
         </li>
       </ol>
       <hr />
       <h3>2. Momenten markeren</h3>
       <p>
-        Momenten markeren kan met de zwevende knoppen of de sneltoetsen zoals
-        rechts aangegeven.
+        Momenten markeren kan met de knoppen in de zijbalk of via de
+        sneltoetsen in het "Sneltoetsen" venster.
       </p>
       <p>
         Elke keer dat je een knop indrukt, verschijnt het bijbehorende label in
