@@ -461,8 +461,18 @@ const App = () => {
   const renderFloatingButtons = () => (
     <>
       <div style={{ display: "flex", gap: "5px", marginBottom: 10 }}>
-        <button onClick={() => markMoment("")} style={{ ...buttonStyle("#ddd", true), flex: 1 }}>➕ Markeer moment</button>
-        <button onClick={() => markMoment("", true)} style={{ ...buttonStyle("#ddd", true), flex: 1 }}>⏸️ Markeer + pauze</button>
+        <button
+          onClick={() => markMoment("")}
+          style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
+        >
+          ➕ Markeer moment
+        </button>
+        <button
+          onClick={() => markMoment("", true)}
+          style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
+        >
+          ⏸️ Markeer + pauze
+        </button>
       </div>
       {showExtraButtons ? (
         <>
@@ -589,9 +599,9 @@ const App = () => {
           />
           <button
             onClick={() => handleVideoLoad()}
-            style={buttonStyle("#007bff", true)}
+            style={{ ...buttonStyle("#007bff", true), width: "100%", fontWeight: "bold" }}
           >
-            🎬 Laad video
+            🎬 Laad video en start analyse
           </button>
           <div style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
             <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
@@ -626,9 +636,7 @@ const App = () => {
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "20px", display: "flex", flexWrap: "wrap", gap: "10px" }}>
-            {renderFloatingButtons()}
-          </div>
+          <div style={{ marginTop: "20px" }}>{renderFloatingButtons()}</div>
         </div>
       </div>
       {deleteMatchName && (
