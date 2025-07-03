@@ -22,7 +22,34 @@
         }
       }
     </script>
-    <style>body{font-family:"Inter",sans-serif;}</style>
+    <style>
+      body { font-family: "Inter", sans-serif; }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        background: #f3f3f3;
+        border: 1px solid #aaa;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      input[type="text"],
+      select,
+      textarea {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 4px 6px;
+      }
+      ul,
+      ol {
+        padding-left: 1.25rem;
+        list-style-position: outside;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
