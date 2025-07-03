@@ -7,7 +7,29 @@
     <script src="https://www.youtube.com/iframe_api"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div class="max-w-7xl mx-auto p-4 grid md:grid-cols-[2fr_1fr] gap-6">
+
+      <!-- VIDEO -->
+      <div class="bg-UIbg rounded-2xl shadow-xl flex items-center justify-center">
+        <!-- (laat hier je bestaande iframe / player ongewijzigd) -->
+      </div>
+
+      <!-- ANALYSE-PANEEL -->
+      <aside class="space-y-4">
+        <h2 class="text-lg font-semibold">Analysis Categories</h2>
+
+        <div class="grid grid-cols-2 gap-3" id="categoryButtons">
+          <!-- knoppen komen in stap 3 -->
+        </div>
+
+        <div class="bg-white/60 backdrop-blur rounded-xl p-4 shadow">
+          <h3 class="font-semibold mb-2">Marked Moments</h3>
+          <ul id="momentsList" class="text-sm space-y-1"></ul>
+        </div>
+      </aside>
+
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
