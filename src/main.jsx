@@ -249,7 +249,6 @@ const App = () => {
   const [table, setTable] = React.useState("matches_heren");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
-  const [showExtraButtons, setShowExtraButtons] = React.useState(true);
 
   const labels = [
     "Doelpunt NL",
@@ -474,33 +473,22 @@ const App = () => {
           ⏸️ Markeer + pauze
         </button>
       </div>
-      {showExtraButtons ? (
-        <>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              <button onClick={() => markMoment("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>⚽ Doelpunt NL</button>
-              <button onClick={() => markMoment("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🎯 Schot NL</button>
-              <button onClick={() => markMoment("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>✅ Balwinst</button>
-              <button onClick={() => markMoment("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>➡️ Start aanval NL</button>
-              <button onClick={() => markMoment("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🛡️ Verdedigingsmoment NL</button>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
-              <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🎯 Schot tegen</button>
-              <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
-              <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
-              <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
-            </div>
-          </div>
-          <div style={{ textAlign: "center", marginTop: 10 }}>
-            <button onClick={() => setShowExtraButtons(false)} style={buttonStyle()}>Verberg knoppen</button>
-          </div>
-        </>
-      ) : (
-        <div style={{ textAlign: "center" }}>
-          <button onClick={() => setShowExtraButtons(true)} style={buttonStyle()}>Toon knoppen</button>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button onClick={() => markMoment("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>⚽ Doelpunt NL</button>
+          <button onClick={() => markMoment("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🎯 Schot NL</button>
+          <button onClick={() => markMoment("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>✅ Balwinst</button>
+          <button onClick={() => markMoment("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>➡️ Start aanval NL</button>
+          <button onClick={() => markMoment("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🛡️ Verdedigingsmoment NL</button>
         </div>
-      )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
+          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🎯 Schot tegen</button>
+          <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
+          <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
+          <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
+        </div>
+      </div>
     </>
   );
 
@@ -542,7 +530,7 @@ const App = () => {
         </h1>
       </div>
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
-        <div style={{ flex: 3 }}>
+        <div style={{ flex: 4 }}>
         <div style={{ position: "relative", paddingTop: "56.25%" }}>
           {!videoLoaded && (
             <div
