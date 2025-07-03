@@ -239,6 +239,7 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
+  const [videoLoaded, setVideoLoaded] = React.useState(false);
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
@@ -316,13 +317,17 @@ const App = () => {
   };
 
 
-  const handlePlayerReady = (event) => setPlayer(event.target);
+  const handlePlayerReady = (event) => {
+    setPlayer(event.target);
+    setVideoLoaded(true);
+  };
 
   const handleVideoLoad = (url = videoId) => {
     const id = getYouTubeVideoId(url);
     if (!id) return;
     if (player) {
       player.loadVideoById(id);
+      setVideoLoaded(true);
     } else {
       document.getElementById("player-container").innerHTML = "";
       new YT.Player("player-container", {
@@ -514,15 +519,31 @@ const App = () => {
           Video Analyse NL
         </h1>
       </div>
-      <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
-      <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
-
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
         <div style={{ flex: 3 }}>
-          <div style={{ position: "relative", paddingTop: "56.25%" }}>
-            <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
-            
-          </div>
+        <div style={{ position: "relative", paddingTop: "56.25%" }}>
+          {!videoLoaded && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "#000",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: "24px",
+              }}
+            >
+              Video
+            </div>
+          )}
+          <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
+
+        </div>
 
           <h3>Gemarkeerde momenten:</h3>
           <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
@@ -547,7 +568,20 @@ const App = () => {
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", gap: "5px", marginBottom: "5px" }}>
+          <input
+            type="text"
+            placeholder="YouTube link plakken..."
+            value={videoId}
+            onChange={(e) => setVideoId(e.target.value)}
+            style={{ width: "100%", marginBottom: 10 }}
+          />
+          <button
+            onClick={() => handleVideoLoad()}
+            style={buttonStyle("#007bff", true)}
+          >
+            🎬 Laad video
+          </button>
+          <div style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
             <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
               ❔ Instructies
             </button>
