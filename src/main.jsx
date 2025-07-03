@@ -53,6 +53,56 @@ const ReleaseModal = ({ onClose }) => (
   </div>
 );
 
+const ShortcutsModal = ({ onClose }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      zIndex: 1000,
+      overflowY: "auto",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        maxWidth: 400,
+        margin: "40px auto",
+        lineHeight: 1.6,
+      }}
+    >
+      <h2>⌨️ Sneltoetsen</h2>
+      <ul style={{ paddingLeft: "20px" }}>
+        <li><strong>1</strong>: Doelpunt NL</li>
+        <li><strong>2</strong>: Tegendoelpunt</li>
+        <li><strong>3</strong>: Schot NL</li>
+        <li><strong>4</strong>: Schot tegen</li>
+        <li><strong>5</strong>: Balwinst</li>
+        <li><strong>6</strong>: Balverlies</li>
+        <li><strong>A</strong>: Start aanval NL</li>
+        <li><strong>S</strong>: Start tegenaanval</li>
+        <li><strong>D</strong>: Verdedigingsmoment NL</li>
+        <li><strong>F</strong>: Verdedigingsmoment tegen</li>
+        <li><strong>W</strong>: Markeer moment</li>
+        <li><strong>E</strong>: Markeer + pauze</li>
+        <li><strong>Spatie</strong>: Start video als deze gepauzeeerd is</li>
+      </ul>
+      <button
+        onClick={onClose}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+      >
+        Sluiten
+      </button>
+    </div>
+  </div>
+);
+
 const InstructionsModal = ({ onClose, label }) => (
   <div
     style={{
@@ -194,6 +244,7 @@ const App = () => {
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [showReleases, setShowReleases] = React.useState(false);
+  const [showShortcuts, setShowShortcuts] = React.useState(false);
   const [table, setTable] = React.useState("matches_heren");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
@@ -426,42 +477,17 @@ const App = () => {
     </>
   );
 
-  const renderLegend = () => (
-    <div style={{
-      border: "1px solid #ccc",
-      borderRadius: "8px",
-      padding: "10px",
-      background: "#f9f9f9",
-      fontSize: "14px",
-      lineHeight: "1.6"
-    }}>
-      <h4 style={{ marginTop: 0 }}>🎮 Sneltoetsen</h4>
-      <ul style={{ paddingLeft: "20px" }}>
-        <li><strong>1</strong>: Doelpunt NL</li>
-        <li><strong>2</strong>: Tegendoelpunt</li>
-        <li><strong>3</strong>: Schot NL</li>
-        <li><strong>4</strong>: Schot tegen</li>
-        <li><strong>5</strong>: Balwinst</li>
-        <li><strong>6</strong>: Balverlies</li>
-        <li><strong>A</strong>: Start aanval NL</li>
-        <li><strong>S</strong>: Start tegenaanval</li>
-        <li><strong>D</strong>: Verdedigingsmoment NL</li>
-        <li><strong>F</strong>: Verdedigingsmoment tegen</li>
-        <li><strong>W</strong>: Markeer moment</li>
-        <li><strong>E</strong>: Markeer + pauze</li>
-        <li><strong>Spatie</strong>: Start video als deze gepauzeeerd is</li>
-      </ul>
-    </div>
-  );
-
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       {showInstructions && (
         <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
       )}
-      {showReleases && (
-        <ReleaseModal onClose={() => setShowReleases(false)} />
-      )}
+        {showReleases && (
+          <ReleaseModal onClose={() => setShowReleases(false)} />
+        )}
+        {showShortcuts && (
+          <ShortcutsModal onClose={() => setShowShortcuts(false)} />
+        )}
       <div
         style={{
           backgroundImage:
@@ -495,20 +521,7 @@ const App = () => {
         <div style={{ flex: 3 }}>
           <div style={{ position: "relative", paddingTop: "56.25%" }}>
             <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
-            <div style={{
-              position: "absolute",
-              top: "10px",
-              left: "10px",
-              right: "10px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              zIndex: 2,
-              justifyContent: "center",
-              pointerEvents: "auto"
-            }}>
-              {renderFloatingButtons()}
-            </div>
+            
           </div>
 
           <h3>Gemarkeerde momenten:</h3>
@@ -541,6 +554,9 @@ const App = () => {
             <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
               📝 Releases
             </button>
+            <button onClick={() => setShowShortcuts(true)} style={buttonStyle()}>
+              ⌨️ Sneltoetsen
+            </button>
           </div>
           <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
             Selecteer hieronder de categorie
@@ -564,8 +580,8 @@ const App = () => {
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "20px" }}>
-            {renderLegend()}
+          <div style={{ marginTop: "20px", display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            {renderFloatingButtons()}
           </div>
         </div>
       </div>
