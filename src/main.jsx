@@ -45,7 +45,7 @@ const ReleaseModal = ({ onClose }) => (
       </ul>
       <button
         onClick={onClose}
-        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer", background: "#f3f3f3", border: "1px solid #aaa" }}
       >
         Sluiten
       </button>
@@ -139,7 +139,7 @@ const InstructionsModal = ({ onClose, label }) => (
       <p>Veel analyse-plezier!</p>
       <button
         onClick={onClose}
-        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer", background: "#f3f3f3", border: "1px solid #aaa" }}
       >
         Aan de slag
       </button>
