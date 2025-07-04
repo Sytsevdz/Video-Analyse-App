@@ -12,6 +12,7 @@ export const formatTime = (seconds) => {
 const INSTRUCTIONS_VERSION = "2";
 
 const RELEASE_NOTES = [
+  "Banner toont nu dames of heren afhankelijk van de gekozen database",
   "Laden van opgeslagen wedstrijd laadt nu ook de juiste video",
   "Verberg en toon knoppen toegevoegd",
   "Fixed frame met scroll optie voor gemarkeerde momenten toegevoegd",
@@ -613,7 +614,7 @@ const handlePlayerReady = (event) => {
             margin: 0,
           }}
         >
-          Video Analyse NL
+          {`Video Analyse NL - ${tableOptions[table]}`}
         </h1>
       </div>
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
