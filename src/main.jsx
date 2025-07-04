@@ -2,6 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
 
+// Helper om seconden om te zetten naar mm:ss
+export const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 const INSTRUCTIONS_VERSION = "2";
 
 const RELEASE_NOTES = [
@@ -240,10 +247,35 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
   </div>
 );
 
+// Toont verticale markers op een tijdlijn van de video
+const Timeline = ({ moments, duration, onSeek }) => {
+  if (!duration) return null;
+  return (
+    <div style={{ position: "relative", height: 20, background: "#eee", marginBottom: 10 }}>
+      {moments.map((m, i) => (
+        <div
+          key={i}
+          onClick={() => onSeek(m.time)}
+          title={`${m.label ? m.label + " " : ""}${formatTime(m.time)}`}
+          style={{
+            position: "absolute",
+            left: `${(m.time / duration) * 100}%`,
+            width: 2,
+            height: "100%",
+            background: "#007bff",
+            cursor: "pointer",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
   const [videoLoaded, setVideoLoaded] = React.useState(false);
+  const [duration, setDuration] = React.useState(0);
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
@@ -307,6 +339,14 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [player]);
 
+  // Bij nieuw geladen video de duur ophalen
+  React.useEffect(() => {
+    if (player && videoId) {
+      const d = player.getDuration();
+      if (d) setDuration(d);
+    }
+  }, [player, videoId]);
+
   React.useEffect(() => {
     const seen = localStorage.getItem("instructionsVersion");
     if (seen !== INSTRUCTIONS_VERSION) {
@@ -320,10 +360,11 @@ const App = () => {
   };
 
 
-  const handlePlayerReady = (event) => {
-    setPlayer(event.target);
-    setVideoLoaded(true);
-  };
+const handlePlayerReady = (event) => {
+  setPlayer(event.target);
+  setVideoLoaded(true);
+  setDuration(event.target.getDuration());
+};
 
   const handleVideoLoad = (url = videoId) => {
     const id = getYouTubeVideoId(url);
@@ -331,6 +372,7 @@ const App = () => {
     if (player) {
       player.loadVideoById(id);
       setVideoLoaded(true);
+      setTimeout(() => setDuration(player.getDuration()), 500);
     } else {
       document.getElementById("player-container").innerHTML = "";
       new YT.Player("player-container", {
@@ -348,11 +390,6 @@ const App = () => {
     return match ? match[1] : null;
   };
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
 
   const markMoment = (label = "", pause = false) => {
     if (!player) return;
@@ -560,6 +597,7 @@ const App = () => {
         </div>
 
           <h3>Gemarkeerde momenten:</h3>
+          <Timeline moments={moments} duration={duration} onSeek={jumpTo} />
           <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {moments.map((m, i) => (
