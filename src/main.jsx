@@ -12,6 +12,7 @@ export const formatTime = (seconds) => {
 const INSTRUCTIONS_VERSION = "3";
 
 const RELEASE_NOTES = [
+  "Overschrijven van bestaande wedstrijden met controle", 
   "Categorie Dames O21 toegevoegd",
   "Categorie Heren O21 toegevoegd",
   "Banner toont nu dames of heren afhankelijk van de gekozen database",
@@ -489,15 +490,13 @@ const handlePlayerReady = (event) => {
         alert('Er staat al een versie met evenveel of meer informatie in de database.');
         return;
       }
-      const confirmOverwrite = window.confirm('De naam bestaat al. Overschrijven?');
+      const confirmOverwrite = window.confirm('De wedstrijd bestaat al in de database. Overschrijven?');
       if (!confirmOverwrite) return;
     }
 
-    const { error } = await supabase.from(table).upsert({
-      name: matchName,
-      moments,
-      video_id: videoId,
-    });
+    const { error } = await supabase
+      .from(table)
+      .upsert({ name: matchName, moments, video_id: videoId }, { onConflict: 'name' });
 
     if (error) {
       console.error('Fout bij opslaan:', error.message);
