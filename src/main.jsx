@@ -247,11 +247,29 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
   </div>
 );
 
-// Toont verticale markers op een tijdlijn van de video
+// Toont markers met icoontjes op een tijdlijn van de video
 const Timeline = ({ moments, duration, onSeek }) => {
-  if (!duration) return null;
+  if (!duration || moments.length === 0) return null;
+
+  const min = Math.max(0, Math.min(...moments.map((m) => m.time)) - 60);
+  const max = Math.min(duration, Math.max(...moments.map((m) => m.time)) + 60);
+  const range = max - min || 1;
+
+  const ICON_MAP = {
+    "Doelpunt NL": "⚽",
+    "Tegendoelpunt": "🥅",
+    "Schot NL": "➡️",
+    "Schot tegen": "⬅️",
+    "Balwinst": "🟢",
+    "Balverlies": "🔴",
+    "Start aanval NL": "🚀",
+    "Start tegenaanval": "🔙",
+    "Verdedigingsmoment NL": "🛡️",
+    "Verdedigingsmoment tegen": "⚠️",
+  };
+
   return (
-    <div style={{ position: "relative", height: 20, background: "#eee", marginBottom: 10 }}>
+    <div style={{ position: "relative", height: 30, background: "#eee", marginBottom: 10 }}>
       {moments.map((m, i) => (
         <div
           key={i}
@@ -259,14 +277,27 @@ const Timeline = ({ moments, duration, onSeek }) => {
           title={`${m.label ? m.label + " " : ""}${formatTime(m.time)}`}
           style={{
             position: "absolute",
-            left: `${(m.time / duration) * 100}%`,
-            width: 2,
-            height: "100%",
-            background: "#007bff",
+            left: `${((m.time - min) / range) * 100}%`,
+            transform: "translateX(-50%)",
             cursor: "pointer",
           }}
-        />
+        >
+          {ICON_MAP[m.label] || "📍"}
+        </div>
       ))}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          fontSize: 12,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>{formatTime(min)}</span>
+        <span>{formatTime(max)}</span>
+      </div>
     </div>
   );
 };
@@ -339,12 +370,21 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [player]);
 
-  // Bij nieuw geladen video de duur ophalen
+  // Bij nieuw geladen video de duur ophalen (ook bij geladen wedstrijden)
   React.useEffect(() => {
-    if (player && videoId) {
+    if (!player || !videoId) return;
+    setDuration(0);
+    let attempts = 0;
+    const check = () => {
       const d = player.getDuration();
-      if (d) setDuration(d);
-    }
+      if (d) {
+        setDuration(d);
+      } else if (attempts < 10) {
+        attempts += 1;
+        setTimeout(check, 500);
+      }
+    };
+    check();
   }, [player, videoId]);
 
   React.useEffect(() => {
@@ -369,10 +409,11 @@ const handlePlayerReady = (event) => {
   const handleVideoLoad = (url = videoId) => {
     const id = getYouTubeVideoId(url);
     if (!id) return;
+    setDuration(0);
     if (player) {
       player.loadVideoById(id);
       setVideoLoaded(true);
-      setTimeout(() => setDuration(player.getDuration()), 500);
+      setTimeout(() => setDuration(player.getDuration()), 1000);
     } else {
       document.getElementById("player-container").innerHTML = "";
       new YT.Player("player-container", {
