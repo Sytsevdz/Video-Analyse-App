@@ -2,6 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
 
+// Helper om seconden om te zetten naar mm:ss
+export const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 const INSTRUCTIONS_VERSION = "2";
 
 const RELEASE_NOTES = [
@@ -13,7 +20,8 @@ const RELEASE_NOTES = [
   "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek).",
   "Indeling aangepast",
   "Sneltoetsen achter knop gestopt",
-  "Link & laad video knop verplaatst"
+  "Link & laad video knop verplaatst",
+  "Tijdlijn verbeterd en schot-iconen onderscheiden"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -240,10 +248,70 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
   </div>
 );
 
+// Toont markers met icoontjes op een tijdlijn van de video
+const Timeline = ({ moments, duration, onSeek }) => {
+  if (!duration || moments.length === 0) return null;
+
+  const min = Math.max(0, Math.min(...moments.map((m) => m.time)) - 60);
+  const max = Math.min(duration, Math.max(...moments.map((m) => m.time)) + 60);
+  const range = max - min || 1;
+
+  // Icons komen overeen met de knoppen voor het markeren van momenten
+  const ICON_MAP = {
+    "Doelpunt NL": "⚽",
+    "Tegendoelpunt": "🥅",
+    "Schot NL": "🎯",
+    "Schot tegen": "💥",
+    "Balwinst": "✅",
+    "Balverlies": "❌",
+    "Start aanval NL": "➡️",
+    "Start tegenaanval": "⬅️",
+    "Verdedigingsmoment NL": "🛡️",
+    "Verdedigingsmoment tegen": "🛡️",
+  };
+
+  return (
+    <div style={{ position: "relative", height: 40, marginBottom: 10 }}>
+      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#ccc" }} />
+      {moments.map((m, i) => (
+        <div
+          key={i}
+          onClick={() => onSeek(m.time)}
+          title={`${m.label ? m.label + " " : ""}${formatTime(m.time)}`}
+          style={{
+            position: "absolute",
+            left: `${((m.time - min) / range) * 100}%`,
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            cursor: "pointer",
+            fontSize: 20,
+          }}
+        >
+          {ICON_MAP[m.label] || "📍"}
+        </div>
+      ))}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          fontSize: 12,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>{formatTime(min)}</span>
+        <span>{formatTime(max)}</span>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
   const [videoLoaded, setVideoLoaded] = React.useState(false);
+  const [duration, setDuration] = React.useState(0);
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
@@ -307,6 +375,23 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [player]);
 
+  // Bij nieuw geladen video de duur ophalen (ook bij geladen wedstrijden)
+  React.useEffect(() => {
+    if (!player || !videoId) return;
+    setDuration(0);
+    let attempts = 0;
+    const check = () => {
+      const d = player.getDuration();
+      if (d) {
+        setDuration(d);
+      } else if (attempts < 10) {
+        attempts += 1;
+        setTimeout(check, 500);
+      }
+    };
+    check();
+  }, [player, videoId]);
+
   React.useEffect(() => {
     const seen = localStorage.getItem("instructionsVersion");
     if (seen !== INSTRUCTIONS_VERSION) {
@@ -320,17 +405,20 @@ const App = () => {
   };
 
 
-  const handlePlayerReady = (event) => {
-    setPlayer(event.target);
-    setVideoLoaded(true);
-  };
+const handlePlayerReady = (event) => {
+  setPlayer(event.target);
+  setVideoLoaded(true);
+  setDuration(event.target.getDuration());
+};
 
   const handleVideoLoad = (url = videoId) => {
     const id = getYouTubeVideoId(url);
     if (!id) return;
+    setDuration(0);
     if (player) {
       player.loadVideoById(id);
       setVideoLoaded(true);
+      setTimeout(() => setDuration(player.getDuration()), 1000);
     } else {
       document.getElementById("player-container").innerHTML = "";
       new YT.Player("player-container", {
@@ -348,11 +436,6 @@ const App = () => {
     return match ? match[1] : null;
   };
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
 
   const markMoment = (label = "", pause = false) => {
     if (!player) return;
@@ -487,7 +570,7 @@ const App = () => {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
-          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🎯 Schot tegen</button>
+          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>💥 Schot tegen</button>
           <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
           <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
           <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
@@ -560,6 +643,7 @@ const App = () => {
         </div>
 
           <h3>Gemarkeerde momenten:</h3>
+          <Timeline moments={moments} duration={duration} onSeek={jumpTo} />
           <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {moments.map((m, i) => (
