@@ -474,18 +474,35 @@ const handlePlayerReady = (event) => {
 
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
+
+    // Check of de wedstrijd al bestaat
+    const { data: existing } = await supabase
+      .from(table)
+      .select('moments')
+      .eq('name', matchName)
+      .single();
+
+    if (existing) {
+      // Alleen overschrijven als er meer momenten zijn dan in de opgeslagen versie
+      const hasMoreInfo = moments.length > (existing.moments ? existing.moments.length : 0);
+      if (!hasMoreInfo) {
+        alert('Er staat al een versie met evenveel of meer informatie in de database.');
+        return;
+      }
+      const confirmOverwrite = window.confirm('De naam bestaat al. Overschrijven?');
+      if (!confirmOverwrite) return;
+    }
+
     const { error } = await supabase.from(table).upsert({
       name: matchName,
       moments,
-      video_id: videoId
+      video_id: videoId,
     });
 
     if (error) {
-      console.error("Fout bij opslaan:", error.message);
-    } else {
-      if (!savedMatches.includes(matchName)) {
-        setSavedMatches([...savedMatches, matchName]);
-      }
+      console.error('Fout bij opslaan:', error.message);
+    } else if (!savedMatches.includes(matchName)) {
+      setSavedMatches([...savedMatches, matchName]);
     }
   };
 
