@@ -474,11 +474,12 @@ const handlePlayerReady = (event) => {
 
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
-    const { error } = await supabase.from(table).upsert({
-      name: matchName,
-      moments,
-      video_id: videoId
-    });
+    const { error } = await supabase
+      .from(table)
+      .upsert(
+        { name: matchName, moments, video_id: videoId },
+        { onConflict: 'name' }
+      );
 
     if (error) {
       console.error("Fout bij opslaan:", error.message);
