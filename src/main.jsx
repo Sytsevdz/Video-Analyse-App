@@ -20,7 +20,8 @@ const RELEASE_NOTES = [
   "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek).",
   "Indeling aangepast",
   "Sneltoetsen achter knop gestopt",
-  "Link & laad video knop verplaatst"
+  "Link & laad video knop verplaatst",
+  "Tijdlijn verbeterd en schot-iconen onderscheiden"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -260,7 +261,7 @@ const Timeline = ({ moments, duration, onSeek }) => {
     "Doelpunt NL": "⚽",
     "Tegendoelpunt": "🥅",
     "Schot NL": "🎯",
-    "Schot tegen": "🎯",
+    "Schot tegen": "💥",
     "Balwinst": "✅",
     "Balverlies": "❌",
     "Start aanval NL": "➡️",
@@ -270,7 +271,8 @@ const Timeline = ({ moments, duration, onSeek }) => {
   };
 
   return (
-    <div style={{ position: "relative", height: 30, background: "#eee", marginBottom: 10 }}>
+    <div style={{ position: "relative", height: 40, marginBottom: 10 }}>
+      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#ccc" }} />
       {moments.map((m, i) => (
         <div
           key={i}
@@ -279,8 +281,10 @@ const Timeline = ({ moments, duration, onSeek }) => {
           style={{
             position: "absolute",
             left: `${((m.time - min) / range) * 100}%`,
-            transform: "translateX(-50%)",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
             cursor: "pointer",
+            fontSize: 20,
           }}
         >
           {ICON_MAP[m.label] || "📍"}
@@ -566,7 +570,7 @@ const handlePlayerReady = (event) => {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
-          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🎯 Schot tegen</button>
+          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>💥 Schot tegen</button>
           <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
           <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
           <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
