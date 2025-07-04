@@ -10,7 +10,8 @@ const RELEASE_NOTES = [
   "Fixed frame met scroll optie voor gemarkeerde momenten toegevoegd",
   "Selecteren van dames/heren categorie",
   "Banner toegevoegd",
-  "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek)."
+  "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek).",
+  "Dames categorie staat nu standaard geselecteerd"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -42,6 +43,56 @@ const ReleaseModal = ({ onClose }) => (
         {RELEASE_NOTES.map((n, i) => (
           <li key={i}>{n}</li>
         ))}
+      </ul>
+      <button
+        onClick={onClose}
+        style={{ marginTop: 20, padding: "8px 12px", borderRadius: 6, cursor: "pointer" }}
+      >
+        Sluiten
+      </button>
+    </div>
+  </div>
+);
+
+const ShortcutsModal = ({ onClose }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      zIndex: 1000,
+      overflowY: "auto",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        maxWidth: 400,
+        margin: "40px auto",
+        lineHeight: 1.6,
+      }}
+    >
+      <h2>⌨️ Sneltoetsen</h2>
+      <ul style={{ paddingLeft: "20px" }}>
+        <li><strong>1</strong>: Doelpunt NL</li>
+        <li><strong>2</strong>: Tegendoelpunt</li>
+        <li><strong>3</strong>: Schot NL</li>
+        <li><strong>4</strong>: Schot tegen</li>
+        <li><strong>5</strong>: Balwinst</li>
+        <li><strong>6</strong>: Balverlies</li>
+        <li><strong>A</strong>: Start aanval NL</li>
+        <li><strong>S</strong>: Start tegenaanval</li>
+        <li><strong>D</strong>: Verdedigingsmoment NL</li>
+        <li><strong>F</strong>: Verdedigingsmoment tegen</li>
+        <li><strong>W</strong>: Markeer moment</li>
+        <li><strong>E</strong>: Markeer + pauze</li>
+        <li><strong>Spatie</strong>: Start video als deze gepauzeeerd is</li>
       </ul>
       <button
         onClick={onClose}
@@ -87,18 +138,19 @@ const InstructionsModal = ({ onClose, label }) => (
       <ol>
         <li>
           Plak de <strong>YouTube-link</strong> in het veld “YouTube link
-          plakken…” bovenaan.
+          plakken…” in de zijbalk rechts.
         </li>
         <li>
-          Klik op <strong>📷 Load video</strong>. De speler verschijnt en de video
-          staat klaar om af te spelen (spatiebalk = play/pause).
+          Klik op <strong>🎬 Laad video en start analyse</strong>. De speler
+          verschijnt en de video staat klaar om af te spelen (spatiebalk =
+          play/pause).
         </li>
       </ol>
       <hr />
       <h3>2. Momenten markeren</h3>
       <p>
-        Momenten markeren kan met de zwevende knoppen of de sneltoetsen zoals
-        rechts aangegeven.
+        Momenten markeren kan met de knoppen in de zijbalk of via de
+        sneltoetsen in het "Sneltoetsen" venster.
       </p>
       <p>
         Elke keer dat je een knop indrukt, verschijnt het bijbehorende label in
@@ -189,15 +241,16 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
 const App = () => {
   const [videoId, setVideoId] = React.useState("");
   const [player, setPlayer] = React.useState(null);
+  const [videoLoaded, setVideoLoaded] = React.useState(false);
   const [moments, setMoments] = React.useState([]);
   const [matchName, setMatchName] = React.useState("");
   const [savedMatches, setSavedMatches] = React.useState([]);
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [showReleases, setShowReleases] = React.useState(false);
-  const [table, setTable] = React.useState("matches_heren");
+  const [showShortcuts, setShowShortcuts] = React.useState(false);
+  const [table, setTable] = React.useState("matches");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
-  const [showExtraButtons, setShowExtraButtons] = React.useState(true);
 
   const labels = [
     "Doelpunt NL",
@@ -265,13 +318,17 @@ const App = () => {
   };
 
 
-  const handlePlayerReady = (event) => setPlayer(event.target);
+  const handlePlayerReady = (event) => {
+    setPlayer(event.target);
+    setVideoLoaded(true);
+  };
 
   const handleVideoLoad = (url = videoId) => {
     const id = getYouTubeVideoId(url);
     if (!id) return;
     if (player) {
       player.loadVideoById(id);
+      setVideoLoaded(true);
     } else {
       document.getElementById("player-container").innerHTML = "";
       new YT.Player("player-container", {
@@ -404,54 +461,37 @@ const App = () => {
 
   const renderFloatingButtons = () => (
     <>
-      <button onClick={() => markMoment("")} style={buttonStyle("#ddd", true)}>➕ Markeer moment</button>
-      <button onClick={() => markMoment("", true)} style={buttonStyle("#ddd", true)}>⏸️ Markeer + pauze</button>
-      {showExtraButtons ? (
-        <>
-          <button onClick={() => markMoment("Doelpunt NL")} style={buttonStyle("#d4edda")}>Doelpunt NL</button>
-          <button onClick={() => markMoment("Tegendoelpunt")} style={buttonStyle("#f8d7da")}>Tegendoelpunt</button>
-          <button onClick={() => markMoment("Schot NL")} style={buttonStyle("#d4edda")}>Schot NL</button>
-          <button onClick={() => markMoment("Schot tegen")} style={buttonStyle("#f8d7da")}>Schot tegen</button>
-          <button onClick={() => markMoment("Balwinst")} style={buttonStyle("#d4edda")}>Balwinst</button>
-          <button onClick={() => markMoment("Balverlies")} style={buttonStyle("#f8d7da")}>Balverlies</button>
-          <button onClick={() => markMoment("Start aanval NL")} style={buttonStyle("#d4edda")}>Start aanval NL</button>
-          <button onClick={() => markMoment("Start tegenaanval")} style={buttonStyle("#f8d7da")}>Start tegenaanval</button>
-          <button onClick={() => markMoment("Verdedigingsmoment NL")} style={buttonStyle("#d4edda")}>Verdedigingsmoment NL</button>
-          <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={buttonStyle("#f8d7da")}>Verdedigingsmoment tegen</button>
-          <button onClick={() => setShowExtraButtons(false)} style={buttonStyle()}>Verberg knoppen</button>
-        </>
-      ) : (
-        <button onClick={() => setShowExtraButtons(true)} style={buttonStyle()}>Toon knoppen</button>
-      )}
+      <div style={{ display: "flex", gap: "5px", marginBottom: 10 }}>
+        <button
+          onClick={() => markMoment("")}
+          style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
+        >
+          ➕ Markeer moment
+        </button>
+        <button
+          onClick={() => markMoment("", true)}
+          style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
+        >
+          ⏸️ Markeer + pauze
+        </button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button onClick={() => markMoment("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>⚽ Doelpunt NL</button>
+          <button onClick={() => markMoment("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🎯 Schot NL</button>
+          <button onClick={() => markMoment("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>✅ Balwinst</button>
+          <button onClick={() => markMoment("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>➡️ Start aanval NL</button>
+          <button onClick={() => markMoment("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🛡️ Verdedigingsmoment NL</button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
+          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🎯 Schot tegen</button>
+          <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
+          <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
+          <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
+        </div>
+      </div>
     </>
-  );
-
-  const renderLegend = () => (
-    <div style={{
-      border: "1px solid #ccc",
-      borderRadius: "8px",
-      padding: "10px",
-      background: "#f9f9f9",
-      fontSize: "14px",
-      lineHeight: "1.6"
-    }}>
-      <h4 style={{ marginTop: 0 }}>🎮 Sneltoetsen</h4>
-      <ul style={{ paddingLeft: "20px" }}>
-        <li><strong>1</strong>: Doelpunt NL</li>
-        <li><strong>2</strong>: Tegendoelpunt</li>
-        <li><strong>3</strong>: Schot NL</li>
-        <li><strong>4</strong>: Schot tegen</li>
-        <li><strong>5</strong>: Balwinst</li>
-        <li><strong>6</strong>: Balverlies</li>
-        <li><strong>A</strong>: Start aanval NL</li>
-        <li><strong>S</strong>: Start tegenaanval</li>
-        <li><strong>D</strong>: Verdedigingsmoment NL</li>
-        <li><strong>F</strong>: Verdedigingsmoment tegen</li>
-        <li><strong>W</strong>: Markeer moment</li>
-        <li><strong>E</strong>: Markeer + pauze</li>
-        <li><strong>Spatie</strong>: Start video als deze gepauzeeerd is</li>
-      </ul>
-    </div>
   );
 
   return (
@@ -459,9 +499,12 @@ const App = () => {
       {showInstructions && (
         <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
       )}
-      {showReleases && (
-        <ReleaseModal onClose={() => setShowReleases(false)} />
-      )}
+        {showReleases && (
+          <ReleaseModal onClose={() => setShowReleases(false)} />
+        )}
+        {showShortcuts && (
+          <ShortcutsModal onClose={() => setShowShortcuts(false)} />
+        )}
       <div
         style={{
           backgroundImage:
@@ -488,28 +531,31 @@ const App = () => {
           Video Analyse NL
         </h1>
       </div>
-      <input type="text" placeholder="YouTube link plakken..." value={videoId} onChange={(e) => setVideoId(e.target.value)} style={{ width: "100%", marginBottom: 10 }} />
-      <button onClick={() => handleVideoLoad()} style={buttonStyle("#007bff", true)}>🎬 Laad video</button>
-
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
-        <div style={{ flex: 3 }}>
-          <div style={{ position: "relative", paddingTop: "56.25%" }}>
-            <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
-            <div style={{
-              position: "absolute",
-              top: "10px",
-              left: "10px",
-              right: "10px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              zIndex: 2,
-              justifyContent: "center",
-              pointerEvents: "auto"
-            }}>
-              {renderFloatingButtons()}
+        <div style={{ flex: 4 }}>
+        <div style={{ position: "relative", paddingTop: "56.25%" }}>
+          {!videoLoaded && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "#000",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: "24px",
+              }}
+            >
+              Video
             </div>
-          </div>
+          )}
+          <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
+
+        </div>
 
           <h3>Gemarkeerde momenten:</h3>
           <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
@@ -534,14 +580,31 @@ const App = () => {
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", gap: "5px", marginBottom: "5px" }}>
+          <input
+            type="text"
+            placeholder="YouTube link plakken..."
+            value={videoId}
+            onChange={(e) => setVideoId(e.target.value)}
+            style={{ width: "100%", marginBottom: 10 }}
+          />
+          <button
+            onClick={() => handleVideoLoad()}
+            style={{ ...buttonStyle("#007bff", true), width: "100%", fontWeight: "bold" }}
+          >
+            🎬 Laad video en start analyse
+          </button>
+          <div style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
             <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
               ❔ Instructies
             </button>
             <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
               📝 Releases
             </button>
+            <button onClick={() => setShowShortcuts(true)} style={buttonStyle()}>
+              ⌨️ Sneltoetsen
+            </button>
           </div>
+          {renderFloatingButtons()}
           <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
             Selecteer hieronder de categorie
           </div>
@@ -564,9 +627,6 @@ const App = () => {
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "20px" }}>
-            {renderLegend()}
-          </div>
         </div>
       </div>
       {deleteMatchName && (
