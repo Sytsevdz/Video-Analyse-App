@@ -11,7 +11,9 @@ const RELEASE_NOTES = [
   "Selecteren van dames/heren categorie",
   "Banner toegevoegd",
   "Mogelijkheid om een verzoek tot verwijderen van wedstrijden in te dienen (werkt nog niet, dus app Sytse direct voor zo'n verzoek).",
-  "Dames categorie staat nu standaard geselecteerd"
+  "Indeling aangepast",
+  "Sneltoetsen achter knop gestopt",
+  "Link & laad video knop verplaatst"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -150,7 +152,7 @@ const InstructionsModal = ({ onClose, label }) => (
       <h3>2. Momenten markeren</h3>
       <p>
         Momenten markeren kan met de knoppen in de zijbalk of via de
-        sneltoetsen in het "Sneltoetsen" venster.
+        sneltoetsen, klik op de "Sneltoetsen" knop om weer te geven.
       </p>
       <p>
         Elke keer dat je een knop indrukt, verschijnt het bijbehorende label in
@@ -161,7 +163,7 @@ const InstructionsModal = ({ onClose, label }) => (
       <h3>3. Wedstrijd opslaan</h3>
       <ol>
         <li>
-          Selecteer rechtsboven <strong>Heren</strong> of <strong>Dames</strong> en vul in het veld “Wedstrijdnaam…” een herkenbare en unieke titel in.
+          Selecteer rechtsonder <strong>Heren</strong> of <strong>Dames</strong> en vul in het veld “Wedstrijdnaam…” een herkenbare en unieke titel in.
         </li>
         <li>
           Klik <strong>Opslaan</strong> om de huidige video + gemarkeerde
