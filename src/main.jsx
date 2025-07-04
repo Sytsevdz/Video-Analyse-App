@@ -255,17 +255,18 @@ const Timeline = ({ moments, duration, onSeek }) => {
   const max = Math.min(duration, Math.max(...moments.map((m) => m.time)) + 60);
   const range = max - min || 1;
 
+  // Icons komen overeen met de knoppen voor het markeren van momenten
   const ICON_MAP = {
     "Doelpunt NL": "⚽",
     "Tegendoelpunt": "🥅",
-    "Schot NL": "➡️",
-    "Schot tegen": "⬅️",
-    "Balwinst": "🟢",
-    "Balverlies": "🔴",
-    "Start aanval NL": "🚀",
-    "Start tegenaanval": "🔙",
+    "Schot NL": "🎯",
+    "Schot tegen": "🎯",
+    "Balwinst": "✅",
+    "Balverlies": "❌",
+    "Start aanval NL": "➡️",
+    "Start tegenaanval": "⬅️",
     "Verdedigingsmoment NL": "🛡️",
-    "Verdedigingsmoment tegen": "⚠️",
+    "Verdedigingsmoment tegen": "🛡️",
   };
 
   return (
