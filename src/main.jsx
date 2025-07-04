@@ -9,10 +9,11 @@ export const formatTime = (seconds) => {
   return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
-const INSTRUCTIONS_VERSION = "2";
+const INSTRUCTIONS_VERSION = "3";
 
 const RELEASE_NOTES = [
   "Categorie Dames O21 toegevoegd",
+  "Categorie Heren O21 toegevoegd",
   "Banner toont nu dames of heren afhankelijk van de gekozen database",
   "Laden van opgeslagen wedstrijd laadt nu ook de juiste video",
   "Verberg en toon knoppen toegevoegd",
@@ -173,7 +174,7 @@ const InstructionsModal = ({ onClose, label }) => (
       <h3>3. Wedstrijd opslaan</h3>
       <ol>
         <li>
-          Selecteer rechtsonder <strong>Heren</strong>, <strong>Dames</strong> of <strong>Dames O21</strong> en vul in het veld “Wedstrijdnaam…” een herkenbare en unieke titel in.
+          Selecteer rechtsonder <strong>Heren</strong>, <strong>Dames</strong>, <strong>Dames O21</strong> of <strong>Heren O21</strong> en vul in het veld “Wedstrijdnaam…” een herkenbare en unieke titel in.
         </li>
         <li>
           Klik <strong>Opslaan</strong> om de huidige video + gemarkeerde
@@ -181,7 +182,7 @@ const InstructionsModal = ({ onClose, label }) => (
         </li>
         <li>
           Gebruik <strong>Bekijk opgeslagen</strong> om eerder opgeslagen
-          wedstrijden per categorie &ndash; Heren, Dames of Dames O21 &ndash; te openen.
+          wedstrijden per categorie &ndash; Heren, Dames, Dames O21 of Heren O21 &ndash; te openen.
         </li>
       </ol>
       <h3>4. Tips</h3>
@@ -340,7 +341,8 @@ const App = () => {
   const tableOptions = {
     matches_heren: "Heren",
     matches: "Dames",
-    matches_u21d: "Dames O21"
+    matches_u21d: "Dames O21",
+    matches_u21h: "Heren O21"
   };
 
   React.useEffect(() => {
