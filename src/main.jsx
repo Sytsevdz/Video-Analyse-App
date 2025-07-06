@@ -12,7 +12,8 @@ export const formatTime = (seconds) => {
 const INSTRUCTIONS_VERSION = "3";
 
 const RELEASE_NOTES = [
-  "Overschrijven van bestaande wedstrijden met controle", 
+  "Spatiebalk pauzeert video en links/rechts spoelen 5 seconden",
+  "Overschrijven van bestaande wedstrijden met controle",
   "Categorie Dames O21 toegevoegd",
   "Categorie Heren O21 toegevoegd",
   "Banner toont nu dames of heren afhankelijk van de gekozen database",
@@ -106,7 +107,9 @@ const ShortcutsModal = ({ onClose }) => (
         <li><strong>F</strong>: Verdedigingsmoment tegen</li>
         <li><strong>W</strong>: Markeer moment</li>
         <li><strong>E</strong>: Markeer + pauze</li>
-        <li><strong>Spatie</strong>: Start video als deze gepauzeeerd is</li>
+        <li><strong>Spatie</strong>: Start/pauzeer video</li>
+        <li><strong>&larr;</strong>: 5 seconden terug</li>
+        <li><strong>&rarr;</strong>: 5 seconden vooruit</li>
       </ul>
       <button
         onClick={onClose}
@@ -370,8 +373,19 @@ const App = () => {
         markMoment("");
       } else if (key === 'e') {
         markMoment("", true);
+      } else if (e.key === 'ArrowLeft') {
+        const t = Math.max(0, player.getCurrentTime() - 5);
+        player.seekTo(t, true);
+      } else if (e.key === 'ArrowRight') {
+        const t = Math.min(player.getDuration(), player.getCurrentTime() + 5);
+        player.seekTo(t, true);
       } else if (key === ' ') {
-        if (player.getPlayerState() === 2) player.playVideo();
+        const state = player.getPlayerState();
+        if (state === 1) {
+          player.pauseVideo();
+        } else if (state === 2) {
+          player.playVideo();
+        }
       } else if (map[key]) {
         markMoment(map[key]);
       }
