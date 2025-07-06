@@ -727,7 +727,7 @@ const handlePlayerReady = (event) => {
 
           <h3>Gemarkeerde momenten:</h3>
           <Timeline moments={filteredMoments} duration={duration} onSeek={jumpTo} />
-          <div style={{ maxHeight: "300px", minHeight: "50px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px", position: "relative" }}>
+          <div style={{ height: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px", position: "relative" }}>
             <button
               onClick={() => setShowFilter(!showFilter)}
               style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}
