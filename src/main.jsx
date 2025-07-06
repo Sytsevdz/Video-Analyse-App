@@ -26,7 +26,8 @@ const RELEASE_NOTES = [
   "Indeling aangepast",
   "Sneltoetsen achter knop gestopt",
   "Link & laad video knop verplaatst",
-  "Tijdlijn verbeterd en schot-iconen onderscheiden"
+  "Tijdlijn verbeterd en schot-iconen onderscheiden",
+  "Snelheid aanpassen met pijltje omhoog/omlaag"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -110,6 +111,8 @@ const ShortcutsModal = ({ onClose }) => (
         <li><strong>Spatie</strong>: Start/pauzeer video</li>
         <li><strong>&larr;</strong>: 5 seconden terug</li>
         <li><strong>&rarr;</strong>: 5 seconden vooruit</li>
+        <li><strong>&uarr;</strong>: Video sneller</li>
+        <li><strong>&darr;</strong>: Video langzamer</li>
       </ul>
       <button
         onClick={onClose}
