@@ -346,6 +346,12 @@ const App = () => {
     "Verdedigingsmoment tegen"
   ];
 
+  const allLabels = ["Geen label", ...labels];
+  const [visibleLabels, setVisibleLabels] = React.useState(
+    () => Object.fromEntries(allLabels.map((l) => [l, true]))
+  );
+  const [showFilter, setShowFilter] = React.useState(false);
+
   const tableOptions = {
     matches_heren: "Heren",
     matches: "Dames",
@@ -639,6 +645,9 @@ const handlePlayerReady = (event) => {
     </>
   );
 
+  const isVisible = (label) => visibleLabels[label || "Geen label"];
+  const filteredMoments = moments.filter((m) => isVisible(m.label));
+
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       {showInstructions && (
@@ -717,22 +726,60 @@ const handlePlayerReady = (event) => {
         </div>
 
           <h3>Gemarkeerde momenten:</h3>
-          <Timeline moments={moments} duration={duration} onSeek={jumpTo} />
-          <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px" }}>
+          <Timeline moments={filteredMoments} duration={duration} onSeek={jumpTo} />
+          <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px", position: "relative" }}>
+            <button
+              onClick={() => setShowFilter(!showFilter)}
+              style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}
+            >
+              🔎 Filter
+            </button>
+            {showFilter && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 35,
+                  right: 5,
+                  background: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: 4,
+                  padding: 5,
+                  zIndex: 2,
+                }}
+              >
+                {allLabels.map((l) => (
+                  <label key={l} style={{ display: "block" }}>
+                    <input
+                      type="checkbox"
+                      checked={visibleLabels[l]}
+                      onChange={() =>
+                        setVisibleLabels((prev) => ({
+                          ...prev,
+                          [l]: !prev[l],
+                        }))
+                      }
+                    />{' '}
+                    {l}
+                  </label>
+                ))}
+              </div>
+            )}
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-              {moments.map((m, i) => (
-                <li key={i} style={{ marginBottom: "4px" }}>
-                  <button onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
-                  <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
-                    <option value="">-- Kies label --</option>
-                    {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
-                  </select>
-                  <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} style={{ marginLeft: 5 }} />
-                  <button onClick={() => adjustTime(i, -1)}>-1s</button>
-                  <button onClick={() => adjustTime(i, 1)}>+1s</button>
-                  <button onClick={() => deleteMoment(i)} style={{ color: "red" }}>🗑️</button>
-                </li>
-              ))}
+              {moments.map((m, i) =>
+                isVisible(m.label) && (
+                  <li key={i} style={{ marginBottom: "4px" }}>
+                    <button onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
+                    <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
+                      <option value="">-- Kies label --</option>
+                      {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
+                    </select>
+                    <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} style={{ marginLeft: 5 }} />
+                    <button onClick={() => adjustTime(i, -1)}>-1s</button>
+                    <button onClick={() => adjustTime(i, 1)}>+1s</button>
+                    <button onClick={() => deleteMoment(i)} style={{ color: "red" }}>🗑️</button>
+                  </li>
+                )
+              )}
             </ul>
           </div>
 
