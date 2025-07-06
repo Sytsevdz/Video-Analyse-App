@@ -26,7 +26,8 @@ const RELEASE_NOTES = [
   "Indeling aangepast",
   "Sneltoetsen achter knop gestopt",
   "Link & laad video knop verplaatst",
-  "Tijdlijn verbeterd en schot-iconen onderscheiden"
+  "Tijdlijn verbeterd en schot-iconen onderscheiden",
+  "Snelheid aanpassen met pijltje omhoog/omlaag"
 ];
 
 const ReleaseModal = ({ onClose }) => (
@@ -110,6 +111,8 @@ const ShortcutsModal = ({ onClose }) => (
         <li><strong>Spatie</strong>: Start/pauzeer video</li>
         <li><strong>&larr;</strong>: 5 seconden terug</li>
         <li><strong>&rarr;</strong>: 5 seconden vooruit</li>
+        <li><strong>&uarr;</strong>: Video sneller</li>
+        <li><strong>&darr;</strong>: Video langzamer</li>
       </ul>
       <button
         onClick={onClose}
@@ -328,6 +331,7 @@ const App = () => {
   const [table, setTable] = React.useState("matches");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
+  const [playbackRate, setPlaybackRate] = React.useState(1);
 
   const labels = [
     "Doelpunt NL",
@@ -379,6 +383,24 @@ const App = () => {
       } else if (e.key === 'ArrowRight') {
         const t = Math.min(player.getDuration(), player.getCurrentTime() + 5);
         player.seekTo(t, true);
+      } else if (e.key === 'ArrowUp') {
+        const rates = player.getAvailablePlaybackRates();
+        const current = player.getPlaybackRate();
+        const idx = rates.indexOf(current);
+        if (idx !== -1 && idx < rates.length - 1) {
+          const newRate = rates[idx + 1];
+          player.setPlaybackRate(newRate);
+          setPlaybackRate(newRate);
+        }
+      } else if (e.key === 'ArrowDown') {
+        const rates = player.getAvailablePlaybackRates();
+        const current = player.getPlaybackRate();
+        const idx = rates.indexOf(current);
+        if (idx > 0) {
+          const newRate = rates[idx - 1];
+          player.setPlaybackRate(newRate);
+          setPlaybackRate(newRate);
+        }
       } else if (key === ' ') {
         const state = player.getPlayerState();
         if (state === 1) {
@@ -429,6 +451,7 @@ const handlePlayerReady = (event) => {
   setPlayer(event.target);
   setVideoLoaded(true);
   setDuration(event.target.getDuration());
+  setPlaybackRate(event.target.getPlaybackRate());
 };
 
   const handleVideoLoad = (url = videoId) => {
@@ -438,6 +461,8 @@ const handlePlayerReady = (event) => {
     if (player) {
       player.loadVideoById(id);
       setVideoLoaded(true);
+      player.setPlaybackRate(1);
+      setPlaybackRate(1);
       setTimeout(() => setDuration(player.getDuration()), 1000);
     } else {
       document.getElementById("player-container").innerHTML = "";
@@ -674,6 +699,20 @@ const handlePlayerReady = (event) => {
             </div>
           )}
           <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
+          <div
+            style={{
+              position: "absolute",
+              top: 5,
+              left: 5,
+              background: "rgba(0,0,0,0.6)",
+              color: "#fff",
+              padding: "2px 6px",
+              borderRadius: "4px",
+              fontSize: "14px",
+            }}
+          >
+            {playbackRate}x
+          </div>
 
         </div>
 
