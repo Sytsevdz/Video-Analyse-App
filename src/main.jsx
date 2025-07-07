@@ -332,6 +332,8 @@ const App = () => {
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
   const [playbackRate, setPlaybackRate] = React.useState(1);
+  const [analysisMode, setAnalysisMode] = React.useState(false);
+  const playbackTimeout = React.useRef(null);
 
   const labels = [
     "Doelpunt NL",
@@ -610,6 +612,36 @@ const handlePlayerReady = (event) => {
     minWidth: large ? "180px" : undefined
   });
 
+  const clearPlayback = () => {
+    if (playbackTimeout.current) {
+      clearTimeout(playbackTimeout.current);
+      playbackTimeout.current = null;
+    }
+  };
+
+  const playCategory = (label) => {
+    if (!player) return;
+    clearPlayback();
+    const clips = moments
+      .filter((m) => m.label === label)
+      .sort((a, b) => a.time - b.time);
+    if (clips.length === 0) return;
+    let idx = 0;
+    const playNext = () => {
+      if (idx >= clips.length) {
+        player.pauseVideo();
+        return;
+      }
+      const start = clips[idx].time;
+      const end = idx < clips.length - 1 ? Math.min(start + 10, clips[idx + 1].time) : start + 10;
+      player.seekTo(start, true);
+      player.playVideo();
+      idx += 1;
+      playbackTimeout.current = setTimeout(playNext, (end - start) * 1000);
+    };
+    playNext();
+  };
+
   const renderFloatingButtons = () => (
     <>
       <div style={{ display: "flex", gap: "5px", marginBottom: 10 }}>
@@ -643,6 +675,25 @@ const handlePlayerReady = (event) => {
         </div>
       </div>
     </>
+  );
+
+  const renderAnalysisButtons = () => (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <button onClick={() => playCategory("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk doelpunt NL</button>
+        <button onClick={() => playCategory("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk schot NL</button>
+        <button onClick={() => playCategory("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk balwinst</button>
+        <button onClick={() => playCategory("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk start aanval NL</button>
+        <button onClick={() => playCategory("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk verdedigingsmoment NL</button>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <button onClick={() => playCategory("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk tegendoelpunt</button>
+        <button onClick={() => playCategory("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk schot tegen</button>
+        <button onClick={() => playCategory("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk balverlies</button>
+        <button onClick={() => playCategory("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk start tegenaanval</button>
+        <button onClick={() => playCategory("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk verdedigingsmoment tegen</button>
+      </div>
+    </div>
   );
 
   const isVisible = (label) => visibleLabels[label || "Moment zonder label"];
@@ -821,17 +872,26 @@ const handlePlayerReady = (event) => {
             🎬 Laad video en start analyse
           </button>
           <div style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
-            <button onClick={() => setShowInstructions(true)} style={buttonStyle()}>
+            <button onClick={() => setShowInstructions(true)} style={{ ...buttonStyle(), flex: 1 }}>
               ❔ Instructies
             </button>
-            <button onClick={() => setShowReleases(true)} style={buttonStyle()}>
+            <button onClick={() => setShowReleases(true)} style={{ ...buttonStyle(), flex: 1 }}>
               📝 Releases
             </button>
-            <button onClick={() => setShowShortcuts(true)} style={buttonStyle()}>
+            <button onClick={() => setShowShortcuts(true)} style={{ ...buttonStyle(), flex: 1 }}>
               ⌨️ Sneltoetsen
             </button>
+            <button
+              onClick={() => {
+                setAnalysisMode(!analysisMode);
+                clearPlayback();
+              }}
+              style={{ ...buttonStyle(), flex: 1 }}
+            >
+              {analysisMode ? "🖊️ Markeer weergave" : "🔎 Analyse weergave"}
+            </button>
           </div>
-          {renderFloatingButtons()}
+          {analysisMode ? renderAnalysisButtons() : renderFloatingButtons()}
           <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
             Selecteer hieronder de categorie
           </div>
