@@ -386,12 +386,15 @@ const App = () => {
       } else if (key === 'e') {
         markMoment("", true);
       } else if (e.key === 'ArrowLeft') {
+        clearPlayback();
         const t = Math.max(0, player.getCurrentTime() - 5);
         player.seekTo(t, true);
       } else if (e.key === 'ArrowRight') {
+        clearPlayback();
         const t = Math.min(player.getDuration(), player.getCurrentTime() + 5);
         player.seekTo(t, true);
       } else if (e.key === 'ArrowUp') {
+        clearPlayback();
         const rates = player.getAvailablePlaybackRates();
         const current = player.getPlaybackRate();
         const idx = rates.indexOf(current);
@@ -401,6 +404,7 @@ const App = () => {
           setPlaybackRate(newRate);
         }
       } else if (e.key === 'ArrowDown') {
+        clearPlayback();
         const rates = player.getAvailablePlaybackRates();
         const current = player.getPlaybackRate();
         const idx = rates.indexOf(current);
@@ -410,6 +414,7 @@ const App = () => {
           setPlaybackRate(newRate);
         }
       } else if (key === ' ') {
+        clearPlayback();
         const state = player.getPlayerState();
         if (state === 1) {
           player.pauseVideo();
@@ -633,7 +638,7 @@ const handlePlayerReady = (event) => {
         return;
       }
       const start = clips[idx].time;
-      const end = idx < clips.length - 1 ? Math.min(start + 10, clips[idx + 1].time) : start + 10;
+      const end = idx < clips.length - 1 ? Math.min(start + 15, clips[idx + 1].time) : start + 15;
       player.seekTo(start, true);
       player.playVideo();
       idx += 1;
