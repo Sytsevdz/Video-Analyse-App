@@ -490,7 +490,11 @@ const handlePlayerReady = (event) => {
   };
 
   const getYouTubeVideoId = (url) => {
-    const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+    const match =
+      url.match(/[?&]v=([^&]+)/) ||
+      url.match(/youtu\.be\/([^?]+)/) ||
+      url.match(/youtube\.com\/live\/([^?]+)/) ||
+      url.match(/youtube\.com\/embed\/([^?]+)/);
     return match ? match[1] : null;
   };
 

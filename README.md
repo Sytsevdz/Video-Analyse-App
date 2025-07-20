@@ -3,7 +3,7 @@
 This is a small React application for annotating YouTube sports videos.
 
 Features include:
-- Load a YouTube video via URL.
+- Load a YouTube video via URL (supports regular and `/live/` links).
 - Mark moments with keyboard shortcuts or buttons.
 - Choose between the `matches_heren`, `matches`, `matches_u21d` and `matches_u21h` tables (via a dropdown) to store and load annotations.
 - Download annotations as JSON.
