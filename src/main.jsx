@@ -458,7 +458,9 @@ const App = () => {
   const isSupabaseReady = () => {
     if (supabase) return true;
 
-    console.error("Supabase is niet geconfigureerd. Vul VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY in .env in.");
+    const message = "Supabase is niet geconfigureerd. Vul VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY in .env in en start de app opnieuw.";
+    console.error(message);
+    alert(message);
     return false;
   };
 
@@ -542,7 +544,17 @@ const handlePlayerReady = (event) => {
   const deleteMoment = (index) => setMoments(moments.filter((_, i) => i !== index));
 
   const saveMatch = async () => {
-    if (!matchName || !videoId || !isSupabaseReady()) return;
+    if (!matchName) {
+      alert('Vul eerst een wedstrijdnaam in.');
+      return;
+    }
+
+    if (!videoId) {
+      alert('Laad eerst een YouTube-video voordat je opslaat.');
+      return;
+    }
+
+    if (!isSupabaseReady()) return;
 
     // Check of de wedstrijd al bestaat binnen de geselecteerde categorie
     const { data: existingMatches, error: existingError } = await supabase

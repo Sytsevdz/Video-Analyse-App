@@ -11,5 +11,5 @@ Features include:
   space bar to pause/resume and arrow keys to rewind or fast-forward by 5
   seconds.
 
-Create a `.env` file based on `.env.example` and fill in your Supabase credentials. The app reads the URL and API key from the `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` variables at build time.
+Create a `.env` file based on `.env.example` and fill in your Supabase credentials. The app reads the URL and API key from the `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` variables at build time. Restart the dev server after changing these values.
  
