@@ -455,6 +455,13 @@ const App = () => {
     setSavedMatches([]);
   }, [selectedTeam]);
 
+  const isSupabaseReady = () => {
+    if (supabase) return true;
+
+    console.error("Supabase is niet geconfigureerd. Vul VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY in .env in.");
+    return false;
+  };
+
   const closeInstructions = () => {
     localStorage.setItem("instructionsVersion", INSTRUCTIONS_VERSION);
     setShowInstructions(false);
@@ -535,7 +542,7 @@ const handlePlayerReady = (event) => {
   const deleteMoment = (index) => setMoments(moments.filter((_, i) => i !== index));
 
   const saveMatch = async () => {
-    if (!matchName || !videoId) return;
+    if (!matchName || !videoId || !isSupabaseReady()) return;
 
     // Check of de wedstrijd al bestaat binnen de geselecteerde categorie
     const { data: existingMatches, error: existingError } = await supabase
@@ -589,6 +596,8 @@ const handlePlayerReady = (event) => {
   };
 
   const handleLoadMatch = async (name) => {
+    if (!isSupabaseReady()) return;
+
     const { data: matches, error } = await supabase
       .from(MATCHES_TABLE)
       .select()
@@ -622,7 +631,7 @@ const handlePlayerReady = (event) => {
   };
 
   const submitDeleteRequest = async () => {
-    if (!deleteMatchName || !deleteMatchTeam) return;
+    if (!deleteMatchName || !deleteMatchTeam || !isSupabaseReady()) return;
 
     const { error } = await supabase
       .from(MATCHES_TABLE)
@@ -647,6 +656,8 @@ const handlePlayerReady = (event) => {
   };
 
   const loadMatches = () => {
+    if (!isSupabaseReady()) return;
+
     supabase
       .from(MATCHES_TABLE)
       .select("name, created_at")
