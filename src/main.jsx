@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
 
+const MATCHES_TABLE = "matches";
+const TEAM_OPTIONS = ["Dames", "Dames -21", "Heren", "Heren -21"];
+
 // Helper om seconden om te zetten naar mm:ss
 export const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60);
@@ -328,8 +331,9 @@ const App = () => {
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [showReleases, setShowReleases] = React.useState(false);
   const [showShortcuts, setShowShortcuts] = React.useState(false);
-  const [table, setTable] = React.useState("matches");
+  const [selectedTeam, setSelectedTeam] = React.useState("Dames");
   const [deleteMatchName, setDeleteMatchName] = React.useState(null);
+  const [deleteMatchTeam, setDeleteMatchTeam] = React.useState(null);
   const [deleteReason, setDeleteReason] = React.useState("");
   const [playbackRate, setPlaybackRate] = React.useState(1);
   const [analysisMode, setAnalysisMode] = React.useState(false);
@@ -353,13 +357,6 @@ const App = () => {
     () => Object.fromEntries(allLabels.map((l) => [l, true]))
   );
   const [showFilter, setShowFilter] = React.useState(false);
-
-  const tableOptions = {
-    matches_heren: "Heren",
-    matches: "Dames",
-    matches_u21d: "Dames O21",
-    matches_u21h: "Heren O21"
-  };
 
   React.useEffect(() => {
     const handleKeyDown = (e) => {
@@ -454,6 +451,10 @@ const App = () => {
     }
   }, []);
 
+  React.useEffect(() => {
+    setSavedMatches([]);
+  }, [selectedTeam]);
+
   const closeInstructions = () => {
     localStorage.setItem("instructionsVersion", INSTRUCTIONS_VERSION);
     setShowInstructions(false);
@@ -490,11 +491,15 @@ const handlePlayerReady = (event) => {
   };
 
   const getYouTubeVideoId = (url) => {
+    if (!url) return null;
+    const trimmedUrl = url.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmedUrl)) return trimmedUrl;
+
     const match =
-      url.match(/[?&]v=([^&]+)/) ||
-      url.match(/youtu\.be\/([^?]+)/) ||
-      url.match(/youtube\.com\/live\/([^?]+)/) ||
-      url.match(/youtube\.com\/embed\/([^?]+)/);
+      trimmedUrl.match(/[?&]v=([^&]+)/) ||
+      trimmedUrl.match(/youtu\.be\/([^?]+)/) ||
+      trimmedUrl.match(/youtube\.com\/live\/([^?]+)/) ||
+      trimmedUrl.match(/youtube\.com\/embed\/([^?]+)/);
     return match ? match[1] : null;
   };
 
@@ -532,12 +537,21 @@ const handlePlayerReady = (event) => {
   const saveMatch = async () => {
     if (!matchName || !videoId) return;
 
-    // Check of de wedstrijd al bestaat
-    const { data: existing } = await supabase
-      .from(table)
-      .select('moments')
+    // Check of de wedstrijd al bestaat binnen de geselecteerde categorie
+    const { data: existingMatches, error: existingError } = await supabase
+      .from(MATCHES_TABLE)
+      .select('id, moments')
       .eq('name', matchName)
-      .single();
+      .eq('team', selectedTeam)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (existingError) {
+      console.error('Fout bij controleren bestaande wedstrijd:', existingError.message);
+      return;
+    }
+
+    const existing = existingMatches?.[0];
 
     if (existing) {
       // Alleen overschrijven als er meer momenten zijn dan in de opgeslagen versie
@@ -548,23 +562,50 @@ const handlePlayerReady = (event) => {
       }
       const confirmOverwrite = window.confirm('De wedstrijd bestaat al in de database. Overschrijven?');
       if (!confirmOverwrite) return;
+
+      const { error } = await supabase
+        .from(MATCHES_TABLE)
+        .update({ name: matchName, moments, video_id: videoId, team: selectedTeam })
+        .eq('id', existing.id);
+
+      if (error) {
+        console.error('Fout bij opslaan:', error.message);
+        return;
+      }
+    } else {
+      const { error } = await supabase
+        .from(MATCHES_TABLE)
+        .insert({ name: matchName, moments, video_id: videoId, team: selectedTeam });
+
+      if (error) {
+        console.error('Fout bij opslaan:', error.message);
+        return;
+      }
     }
 
-    const { error } = await supabase
-      .from(table)
-      .upsert({ name: matchName, moments, video_id: videoId }, { onConflict: 'name' });
-
-    if (error) {
-      console.error('Fout bij opslaan:', error.message);
-    } else if (!savedMatches.includes(matchName)) {
+    if (!savedMatches.includes(matchName)) {
       setSavedMatches([...savedMatches, matchName]);
     }
   };
 
   const handleLoadMatch = async (name) => {
-    const { data, error } = await supabase.from(table).select().eq("name", name).single();
+    const { data: matches, error } = await supabase
+      .from(MATCHES_TABLE)
+      .select()
+      .eq("name", name)
+      .eq("team", selectedTeam)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
     if (error) {
       console.error("Fout bij ophalen:", error.message);
+      return;
+    }
+
+    const data = matches?.[0];
+
+    if (!data) {
+      console.error("Geen wedstrijd gevonden voor deze categorie.");
       return;
     }
 
@@ -576,30 +617,50 @@ const handlePlayerReady = (event) => {
 
   const deleteMatch = async (name) => {
     setDeleteMatchName(name);
+    setDeleteMatchTeam(selectedTeam);
     setDeleteReason("");
   };
 
   const submitDeleteRequest = async () => {
-    if (!deleteMatchName) return;
-    try {
-      await supabase.from('delete_requests').insert({
-        match: deleteMatchName,
-        reason: deleteReason,
-        table
-      });
-      alert('Verwijderingsverzoek verstuurd');
-    } catch (e) {
-      console.error('Fout bij verzoek:', e.message);
-    } finally {
-      setDeleteMatchName(null);
+    if (!deleteMatchName || !deleteMatchTeam) return;
+
+    const { error } = await supabase
+      .from(MATCHES_TABLE)
+      .delete()
+      .eq("name", deleteMatchName)
+      .eq("team", deleteMatchTeam);
+
+    if (error) {
+      console.error('Fout bij verwijderen:', error.message);
+      return;
     }
+
+    setSavedMatches((prev) => prev.filter((name) => name !== deleteMatchName));
+    if (matchName === deleteMatchName && selectedTeam === deleteMatchTeam) {
+      setMatchName("");
+      setMoments([]);
+      setVideoId("");
+    }
+    setDeleteMatchName(null);
+    setDeleteMatchTeam(null);
+    setDeleteReason("");
   };
 
   const loadMatches = () => {
-    supabase.from(table).select("name").then(({ data }) => {
-      const names = data.map((m) => m.name).sort((a, b) => a.localeCompare(b));
-      setSavedMatches(names);
-    });
+    supabase
+      .from(MATCHES_TABLE)
+      .select("name, created_at")
+      .eq("team", selectedTeam)
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Fout bij ophalen wedstrijden:", error.message);
+          return;
+        }
+
+        const names = (data || []).map((m) => m.name);
+        setSavedMatches(names);
+      });
   };
 
   const download = () => {
@@ -711,7 +772,7 @@ const handlePlayerReady = (event) => {
   return (
     <div style={{ fontFamily: "sans-serif", padding: 20 }}>
       {showInstructions && (
-        <InstructionsModal onClose={closeInstructions} label={tableOptions[table]} />
+        <InstructionsModal onClose={closeInstructions} label={selectedTeam} />
       )}
         {showReleases && (
           <ReleaseModal onClose={() => setShowReleases(false)} />
@@ -742,7 +803,7 @@ const handlePlayerReady = (event) => {
             margin: 0,
           }}
         >
-          {`Video Analyse NL - ${tableOptions[table]}`}
+          {`Video Analyse NL - ${selectedTeam}`}
         </h1>
       </div>
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
@@ -904,9 +965,9 @@ const handlePlayerReady = (event) => {
           <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
             Selecteer hieronder de categorie
           </div>
-          <select value={table} onChange={(e) => setTable(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
-            {Object.entries(tableOptions).map(([val, label]) => (
-              <option key={val} value={val}>{label}</option>
+          <select value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
+            {TEAM_OPTIONS.map((team) => (
+              <option key={team} value={team}>{team}</option>
             ))}
           </select>
           <input type="text" placeholder="Wedstrijdnaam..." value={matchName} onChange={(e) => setMatchName(e.target.value)} style={{ width: "100%" }} />
@@ -931,7 +992,10 @@ const handlePlayerReady = (event) => {
           reason={deleteReason}
           onReasonChange={setDeleteReason}
           onSubmit={submitDeleteRequest}
-          onClose={() => setDeleteMatchName(null)}
+          onClose={() => {
+            setDeleteMatchName(null);
+            setDeleteMatchTeam(null);
+          }}
         />
       )}
     </div>
