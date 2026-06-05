@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { supabase } from "./supabaseClient";
+import "./styles.css";
 
 const MATCHES_TABLE = "matches";
 const TEAM_OPTIONS = ["Dames", "Dames -21", "Heren", "Heren -21"];
@@ -48,6 +49,7 @@ const ReleaseModal = ({ onClose }) => (
     }}
   >
     <div
+      className="modal-card"
       style={{
         background: "#fff",
         padding: 20,
@@ -88,34 +90,35 @@ const ShortcutsModal = ({ onClose }) => (
     }}
   >
     <div
+      className="modal-card"
       style={{
         background: "#fff",
         padding: 20,
         borderRadius: 8,
-        maxWidth: 400,
+        maxWidth: 620,
         margin: "40px auto",
         lineHeight: 1.6,
       }}
     >
       <h2>⌨️ Sneltoetsen</h2>
-      <ul style={{ paddingLeft: "20px" }}>
-        <li><strong>1</strong>: Doelpunt NL</li>
-        <li><strong>2</strong>: Tegendoelpunt</li>
-        <li><strong>3</strong>: Schot NL</li>
-        <li><strong>4</strong>: Schot tegen</li>
-        <li><strong>5</strong>: Balwinst</li>
-        <li><strong>6</strong>: Balverlies</li>
-        <li><strong>A</strong>: Start aanval NL</li>
-        <li><strong>S</strong>: Start tegenaanval</li>
-        <li><strong>D</strong>: Verdedigingsmoment NL</li>
-        <li><strong>F</strong>: Verdedigingsmoment tegen</li>
-        <li><strong>W</strong>: Markeer moment</li>
-        <li><strong>E</strong>: Markeer + pauze</li>
-        <li><strong>Spatie</strong>: Start/pauzeer video</li>
-        <li><strong>&larr;</strong>: 5 seconden terug</li>
-        <li><strong>&rarr;</strong>: 5 seconden vooruit</li>
-        <li><strong>&uarr;</strong>: Video sneller</li>
-        <li><strong>&darr;</strong>: Video langzamer</li>
+      <ul className="shortcut-list">
+        <li className="shortcut-item"><span className="keycap">1</span> Doelpunt NL</li>
+        <li className="shortcut-item"><span className="keycap">2</span> Tegendoelpunt</li>
+        <li className="shortcut-item"><span className="keycap">3</span> Schot NL</li>
+        <li className="shortcut-item"><span className="keycap">4</span> Schot tegen</li>
+        <li className="shortcut-item"><span className="keycap">5</span> Balwinst</li>
+        <li className="shortcut-item"><span className="keycap">6</span> Balverlies</li>
+        <li className="shortcut-item"><span className="keycap">A</span> Start aanval NL</li>
+        <li className="shortcut-item"><span className="keycap">S</span> Start tegenaanval</li>
+        <li className="shortcut-item"><span className="keycap">D</span> Verdedigingsmoment NL</li>
+        <li className="shortcut-item"><span className="keycap">F</span> Verdedigingsmoment tegen</li>
+        <li className="shortcut-item"><span className="keycap">W</span> Markeer moment</li>
+        <li className="shortcut-item"><span className="keycap">E</span> Markeer + pauze</li>
+        <li className="shortcut-item"><span className="keycap">Spatie</span> Start/pauzeer video</li>
+        <li className="shortcut-item"><span className="keycap">←</span> 5 seconden terug</li>
+        <li className="shortcut-item"><span className="keycap">→</span> 5 seconden vooruit</li>
+        <li className="shortcut-item"><span className="keycap">↑</span> Video sneller</li>
+        <li className="shortcut-item"><span className="keycap">↓</span> Video langzamer</li>
       </ul>
       <button
         onClick={onClose}
@@ -142,6 +145,7 @@ const InstructionsModal = ({ onClose, label }) => (
     }}
   >
     <div
+      className="modal-card"
       style={{
         background: "#fff",
         padding: 20,
@@ -237,6 +241,7 @@ const DeleteRequestModal = ({ match, reason, onReasonChange, onSubmit, onClose }
     }}
   >
     <div
+      className="modal-card"
       style={{
         background: "#fff",
         padding: 20,
@@ -737,54 +742,56 @@ const handlePlayerReady = (event) => {
 
   const renderFloatingButtons = () => (
     <>
-      <div style={{ display: "flex", gap: "5px", marginBottom: 10 }}>
+      <div style={{ display: "flex", gap: "10px", marginBottom: 10 }}>
         <button
           onClick={() => markMoment("")}
+          className="neutral-action"
           style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
         >
           ➕ Markeer moment
         </button>
         <button
           onClick={() => markMoment("", true)}
+          className="neutral-action"
           style={{ ...buttonStyle("#ddd", true), flex: 1, fontWeight: "bold" }}
         >
           ⏸️ Markeer + pauze
         </button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-          <button onClick={() => markMoment("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>⚽ Doelpunt NL</button>
-          <button onClick={() => markMoment("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🎯 Schot NL</button>
-          <button onClick={() => markMoment("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>✅ Balwinst</button>
-          <button onClick={() => markMoment("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>➡️ Start aanval NL</button>
-          <button onClick={() => markMoment("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🛡️ Verdedigingsmoment NL</button>
+      <div className="quick-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
+        <div className="button-column" style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button className="green-action" onClick={() => markMoment("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>⚽ Doelpunt NL</button>
+          <button className="green-action" onClick={() => markMoment("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🎯 Schot NL</button>
+          <button className="green-action" onClick={() => markMoment("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>✅ Balwinst</button>
+          <button className="green-action" onClick={() => markMoment("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>➡️ Start aanval NL</button>
+          <button className="green-action" onClick={() => markMoment("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>🛡️ Verdedigingsmoment NL</button>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-          <button onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
-          <button onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>💥 Schot tegen</button>
-          <button onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
-          <button onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
-          <button onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
+        <div className="button-column" style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <button className="red-action" onClick={() => markMoment("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🥅 Tegendoelpunt</button>
+          <button className="red-action" onClick={() => markMoment("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>💥 Schot tegen</button>
+          <button className="red-action" onClick={() => markMoment("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>❌ Balverlies</button>
+          <button className="red-action" onClick={() => markMoment("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>⬅️ Start tegenaanval</button>
+          <button className="red-action" onClick={() => markMoment("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>🛡️ Verdedigingsmoment tegen</button>
         </div>
       </div>
     </>
   );
 
   const renderAnalysisButtons = () => (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-        <button onClick={() => playCategory("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk doelpunt NL</button>
-        <button onClick={() => playCategory("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk schot NL</button>
-        <button onClick={() => playCategory("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk balwinst</button>
-        <button onClick={() => playCategory("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk start aanval NL</button>
-        <button onClick={() => playCategory("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk verdedigingsmoment NL</button>
+    <div className="mode-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px" }}>
+      <div className="button-column" style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <button className="green-action" onClick={() => playCategory("Doelpunt NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk doelpunt NL</button>
+        <button className="green-action" onClick={() => playCategory("Schot NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk schot NL</button>
+        <button className="green-action" onClick={() => playCategory("Balwinst")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk balwinst</button>
+        <button className="green-action" onClick={() => playCategory("Start aanval NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk start aanval NL</button>
+        <button className="green-action" onClick={() => playCategory("Verdedigingsmoment NL")} style={{ ...buttonStyle("#d4edda"), width: "100%" }}>Bekijk verdedigingsmoment NL</button>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-        <button onClick={() => playCategory("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk tegendoelpunt</button>
-        <button onClick={() => playCategory("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk schot tegen</button>
-        <button onClick={() => playCategory("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk balverlies</button>
-        <button onClick={() => playCategory("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk start tegenaanval</button>
-        <button onClick={() => playCategory("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk verdedigingsmoment tegen</button>
+      <div className="button-column" style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <button className="red-action" onClick={() => playCategory("Tegendoelpunt")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk tegendoelpunt</button>
+        <button className="red-action" onClick={() => playCategory("Schot tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk schot tegen</button>
+        <button className="red-action" onClick={() => playCategory("Balverlies")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk balverlies</button>
+        <button className="red-action" onClick={() => playCategory("Start tegenaanval")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk start tegenaanval</button>
+        <button className="red-action" onClick={() => playCategory("Verdedigingsmoment tegen")} style={{ ...buttonStyle("#f8d7da"), width: "100%" }}>Bekijk verdedigingsmoment tegen</button>
       </div>
     </div>
   );
@@ -793,221 +800,299 @@ const handlePlayerReady = (event) => {
   const filteredMoments = moments.filter((m) => isVisible(m.label));
 
   return (
-    <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+    <div className="app-shell">
       {showInstructions && (
         <InstructionsModal onClose={closeInstructions} label={selectedTeam} />
       )}
-        {showReleases && (
-          <ReleaseModal onClose={() => setShowReleases(false)} />
-        )}
-        {showShortcuts && (
-          <ShortcutsModal onClose={() => setShowShortcuts(false)} />
-        )}
+      {showReleases && (
+        <ReleaseModal onClose={() => setShowReleases(false)} />
+      )}
+      {showShortcuts && (
+        <ShortcutsModal onClose={() => setShowShortcuts(false)} />
+      )}
+
       <div
+        className="hero"
         style={{
           backgroundImage:
             "url('/canoe_polo_banner_8x1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "200px",
-          borderRadius: "8px",
+          borderRadius: "18px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "#fff",
-          marginBottom: 20,
+          marginBottom: 22,
         }}
       >
         <h1
+          className="hero-title"
           style={{
-            background: "rgba(0,0,0,0.5)",
-            padding: "10px 20px",
-            borderRadius: "8px",
+            background: "rgba(0,0,0,0.45)",
+            padding: "12px 22px",
+            borderRadius: "14px",
             margin: 0,
           }}
         >
           {`Video Analyse NL - ${selectedTeam}`}
         </h1>
       </div>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginTop: 20 }}>
-        <div style={{ flex: 4 }}>
-        <div style={{ position: "relative", paddingTop: "56.25%" }}>
-          {!videoLoaded && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                background: "#000",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontSize: "24px",
-              }}
-            >
-              Video
+
+      <div className="app-grid">
+        <div className="main-column stack">
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Video</h2>
+                <p className="card-subtitle">Analyseer de YouTube-video met duidelijke afspeelsnelheid.</p>
+              </div>
             </div>
-          )}
-          <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
-          <div
-            style={{
-              position: "absolute",
-              top: 5,
-              left: 5,
-              background: "rgba(0,0,0,0.6)",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "4px",
-              fontSize: "14px",
-            }}
-          >
-            {playbackRate}x
-          </div>
-
-        </div>
-
-          <h3>Gemarkeerde momenten:</h3>
-          <Timeline moments={filteredMoments} duration={duration} onSeek={jumpTo} />
-          <div style={{ height: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px", position: "relative" }}>
-            <button
-              onClick={() => setShowFilter(!showFilter)}
-              style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}
-            >
-              🔎 Filter
-            </button>
-            {showFilter && (
+            <div className="video-frame" style={{ position: "relative", paddingTop: "56.25%" }}>
+              {!videoLoaded && (
+                <div
+                  className="video-placeholder"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "#000",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontSize: "24px",
+                  }}
+                >
+                  Video
+                </div>
+              )}
+              <div id="player-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}></div>
               <div
+                className="playback-pill"
                 style={{
                   position: "absolute",
-                  top: 35,
-                  right: 5,
-                  background: "#fff",
-                  border: "1px solid #ccc",
-                  borderRadius: 4,
-                  padding: 5,
-                  zIndex: 2,
+                  top: 5,
+                  left: 5,
+                  background: "rgba(0,0,0,0.6)",
+                  color: "#fff",
+                  padding: "2px 6px",
+                  borderRadius: "4px",
+                  fontSize: "14px",
                 }}
               >
-                <button
-                  onClick={() =>
-                    setVisibleLabels(Object.fromEntries(allLabels.map((l) => [l, true])))
-                  }
-                  style={{ display: "block", width: "100%", textAlign: "left" }}
-                >
-                  Selecteer alles
-                </button>
-                <button
-                  onClick={() =>
-                    setVisibleLabels(Object.fromEntries(allLabels.map((l) => [l, false])))
-                  }
-                  style={{ display: "block", width: "100%", textAlign: "left" }}
-                >
-                  Selecteer niks
-                </button>
-                <hr />
-                {allLabels.map((l) => (
-                  <label key={l} style={{ display: "block" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleLabels[l]}
-                      onChange={() =>
-                        setVisibleLabels((prev) => ({
-                          ...prev,
-                          [l]: !prev[l],
-                        }))
-                      }
-                    />{' '}
-                    {l}
-                  </label>
-                ))}
+                {playbackRate}x
               </div>
-            )}
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-              {filteredMoments.length === 0 && (
-                <li style={{ textAlign: "center", color: "#777", padding: "10px 0" }}>
-                  Momenten verschijnen hier.
-                </li>
+            </div>
+          </section>
+
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Gemarkeerde momenten</h2>
+                <p className="card-subtitle">Elke gebeurtenis staat als aparte rij met tijd, label en notitie.</p>
+              </div>
+              <button onClick={download} className="neutral-action" style={buttonStyle()}>📥 Download JSON</button>
+            </div>
+            <div className="timeline-wrap">
+              <Timeline moments={filteredMoments} duration={duration} onSeek={jumpTo} />
+            </div>
+            <div className="moments-panel" style={{ height: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "0 5px", borderRadius: "8px", position: "relative" }}>
+              <button
+                onClick={() => setShowFilter(!showFilter)}
+                className="filter-button neutral-action"
+                style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}
+              >
+                🔎 Filter
+              </button>
+              {showFilter && (
+                <div
+                  className="filter-popover"
+                  style={{
+                    position: "absolute",
+                    top: 35,
+                    right: 5,
+                    background: "#fff",
+                    border: "1px solid #ccc",
+                    borderRadius: 4,
+                    padding: 5,
+                    zIndex: 2,
+                  }}
+                >
+                  <button
+                    onClick={() =>
+                      setVisibleLabels(Object.fromEntries(allLabels.map((l) => [l, true])))
+                    }
+                    className="neutral-action"
+                    style={{ display: "block", width: "100%", textAlign: "left" }}
+                  >
+                    Selecteer alles
+                  </button>
+                  <button
+                    onClick={() =>
+                      setVisibleLabels(Object.fromEntries(allLabels.map((l) => [l, false])))
+                    }
+                    className="neutral-action"
+                    style={{ display: "block", width: "100%", textAlign: "left", marginTop: 6 }}
+                  >
+                    Selecteer niks
+                  </button>
+                  <hr />
+                  {allLabels.map((l) => (
+                    <label key={l} style={{ display: "block", marginBottom: 4 }}>
+                      <input
+                        type="checkbox"
+                        checked={visibleLabels[l]}
+                        onChange={() =>
+                          setVisibleLabels((prev) => ({
+                            ...prev,
+                            [l]: !prev[l],
+                          }))
+                        }
+                      />{' '}
+                      {l}
+                    </label>
+                  ))}
+                </div>
               )}
-              {filteredMoments.map((m, i) => (
-                <li key={i} style={{ marginBottom: "4px" }}>
-                  <button onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
-                  <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
-                    <option value="">-- Kies label --</option>
-                    {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
-                  </select>
-                  <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} style={{ marginLeft: 5 }} />
-                  <button onClick={() => adjustTime(i, -1)}>-1s</button>
-                  <button onClick={() => adjustTime(i, 1)}>+1s</button>
-                  <button onClick={() => deleteMoment(i)} style={{ color: "red" }}>🗑️</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <button onClick={download} style={buttonStyle()}>📥 Download JSON</button>
+              <ul className="moment-list" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {filteredMoments.length === 0 && (
+                  <li style={{ textAlign: "center", color: "#777", padding: "30px 0" }}>
+                    Momenten verschijnen hier.
+                  </li>
+                )}
+                {filteredMoments.map((m, i) => (
+                  <li key={i} className="moment-row" style={{ marginBottom: "4px" }}>
+                    <button className="time-button" onClick={() => jumpTo(m.time)} style={{ marginRight: 5, ...buttonStyle() }}>{formatTime(m.time)}</button>
+                    <select value={m.label} onChange={(e) => updateLabel(i, e.target.value)}>
+                      <option value="">-- Kies label --</option>
+                      {labels.map((l, j) => <option key={j} value={l}>{l}</option>)}
+                    </select>
+                    <input type="text" placeholder="Notitie..." value={m.note} onChange={(e) => updateNote(i, e.target.value)} />
+                    <button className="icon-button neutral-action" onClick={() => adjustTime(i, -1)}>-1s</button>
+                    <button className="icon-button neutral-action" onClick={() => adjustTime(i, 1)}>+1s</button>
+                    <button className="icon-button danger-button" onClick={() => deleteMoment(i)}>🗑️</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <input
-            type="text"
-            placeholder="YouTube link plakken..."
-            value={videoId}
-            onChange={(e) => setVideoId(e.target.value)}
-            style={{ width: "100%", marginBottom: 10 }}
-          />
-          <button
-            onClick={() => handleVideoLoad()}
-            style={{ ...buttonStyle("#007bff", true), width: "100%", fontWeight: "bold" }}
-          >
-            🎬 Laad video en start analyse
-          </button>
-          <div style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
-            <button onClick={() => setShowInstructions(true)} style={{ ...buttonStyle(), flex: 1 }}>
-              ❔ Instructies
-            </button>
-            <button onClick={() => setShowReleases(true)} style={{ ...buttonStyle(), flex: 1 }}>
-              📝 Releases
-            </button>
-            <button onClick={() => setShowShortcuts(true)} style={{ ...buttonStyle(), flex: 1 }}>
-              ⌨️ Sneltoetsen
-            </button>
+        <aside className="side-column stack">
+          <section className="card form-stack">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Wedstrijdbeheer</h2>
+                <p className="card-subtitle">Laad een video, kies de categorie en sla je analyse op.</p>
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="YouTube link plakken..."
+              value={videoId}
+              onChange={(e) => setVideoId(e.target.value)}
+              style={{ width: "100%" }}
+            />
             <button
-              onClick={() => {
-                setAnalysisMode(!analysisMode);
-                clearPlayback();
-              }}
-              style={{ ...buttonStyle(), flex: 1 }}
+              onClick={() => handleVideoLoad()}
+              className="primary-action"
+              style={{ ...buttonStyle("#007bff", true), width: "100%", fontWeight: "bold" }}
             >
-              {analysisMode ? "🖊️ Markeer weergave" : "🔎 Analyse weergave"}
+              🎬 Laad video en start analyse
             </button>
-          </div>
-          {analysisMode ? renderAnalysisButtons() : renderFloatingButtons()}
-          <div style={{ background: "#ffeeba", padding: "5px", borderRadius: "4px", marginBottom: "5px", textAlign: "center" }}>
-            Selecteer hieronder de categorie
-          </div>
-          <select value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)} style={{ width: "100%", marginBottom: 5 }}>
-            {TEAM_OPTIONS.map((team) => (
-              <option key={team} value={team}>{team}</option>
-            ))}
-          </select>
-          <input type="text" placeholder="Wedstrijdnaam..." value={matchName} onChange={(e) => setMatchName(e.target.value)} style={{ width: "100%" }} />
-          <button onClick={saveMatch} disabled={!matchName} style={buttonStyle()}>💾 Opslaan</button>
-          <button onClick={loadMatches} style={buttonStyle()}>📂 Bekijk opgeslagen</button>
-          {savedMatches.length > 0 && (
-            <ul>
-              {savedMatches.map((m, i) => (
-                <li key={i}>
-                  <strong>{m}</strong>
-                  <button onClick={() => handleLoadMatch(m)} style={{ marginLeft: 10 }}>Laden</button>
-                  <button onClick={() => deleteMatch(m)} style={{ marginLeft: 5, color: "red" }}>🗑️</button>
-                </li>
+            <div className="action-row" style={{ display: "flex", gap: "5px", margin: "10px 0" }}>
+              <button onClick={() => setShowInstructions(true)} className="neutral-action" style={{ ...buttonStyle(), flex: 1 }}>
+                ❔ Instructies
+              </button>
+              <button onClick={() => setShowReleases(true)} className="neutral-action" style={{ ...buttonStyle(), flex: 1 }}>
+                📝 Releases
+              </button>
+              <button onClick={() => setShowShortcuts(true)} className="neutral-action" style={{ ...buttonStyle(), flex: 1 }}>
+                ⌨️ Sneltoetsen
+              </button>
+              <button
+                onClick={() => {
+                  setAnalysisMode(!analysisMode);
+                  clearPlayback();
+                }}
+                className="neutral-action"
+                style={{ ...buttonStyle(), flex: 1 }}
+              >
+                {analysisMode ? "🖊️ Markeer weergave" : "🔎 Analyse weergave"}
+              </button>
+            </div>
+            <div className="help-note" style={{ background: "#ffeeba", padding: "8px 10px", borderRadius: "10px", textAlign: "center" }}>
+              Selecteer hieronder de categorie
+            </div>
+            <select value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)} style={{ width: "100%" }}>
+              {TEAM_OPTIONS.map((team) => (
+                <option key={team} value={team}>{team}</option>
               ))}
+            </select>
+            <input type="text" placeholder="Wedstrijdnaam..." value={matchName} onChange={(e) => setMatchName(e.target.value)} style={{ width: "100%" }} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={saveMatch} disabled={!matchName} className="green-action" style={{ ...buttonStyle(), flex: 1 }}>💾 Opslaan</button>
+              <button onClick={loadMatches} className="neutral-action" style={{ ...buttonStyle(), flex: 1 }}>📂 Bekijk opgeslagen</button>
+            </div>
+          </section>
+
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Snel markeren</h2>
+                <p className="card-subtitle">Groen blijft NL, rood blijft tegenstander.</p>
+              </div>
+            </div>
+            {analysisMode ? renderAnalysisButtons() : renderFloatingButtons()}
+          </section>
+
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Sneltoetsen</h2>
+                <p className="card-subtitle">Compact overzicht van de bestaande toetscombinaties.</p>
+              </div>
+            </div>
+            <ul className="shortcut-list">
+              <li className="shortcut-item"><span className="keycap">1</span> Doelpunt NL</li>
+              <li className="shortcut-item"><span className="keycap">2</span> Tegendoelpunt</li>
+              <li className="shortcut-item"><span className="keycap">3</span> Schot NL</li>
+              <li className="shortcut-item"><span className="keycap">4</span> Schot tegen</li>
+              <li className="shortcut-item"><span className="keycap">5</span> Balwinst</li>
+              <li className="shortcut-item"><span className="keycap">6</span> Balverlies</li>
+              <li className="shortcut-item"><span className="keycap">A</span> Start aanval NL</li>
+              <li className="shortcut-item"><span className="keycap">S</span> Start tegenaanval</li>
+              <li className="shortcut-item"><span className="keycap">W</span> Markeer moment</li>
+              <li className="shortcut-item"><span className="keycap">E</span> Markeer + pauze</li>
             </ul>
-          )}
-        </div>
+          </section>
+
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Opgeslagen wedstrijden</h2>
+                <p className="card-subtitle">Gebruik “Bekijk opgeslagen” om wedstrijden voor {selectedTeam} te tonen.</p>
+              </div>
+            </div>
+            {savedMatches.length > 0 ? (
+              <ul className="saved-list">
+                {savedMatches.map((m, i) => (
+                  <li key={i} className="saved-row">
+                    <strong>{m}</strong>
+                    <button onClick={() => handleLoadMatch(m)} className="neutral-action">Laden</button>
+                    <button onClick={() => deleteMatch(m)} className="danger-button">🗑️</button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="card-subtitle" style={{ margin: 0 }}>Nog geen opgeslagen wedstrijden geladen.</p>
+            )}
+          </section>
+        </aside>
       </div>
       {deleteMatchName && (
         <DeleteRequestModal
